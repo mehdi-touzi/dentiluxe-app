@@ -17,6 +17,7 @@ function today(){return new Date().toISOString().slice(0,10);}
 function isToday(d){return d===today();}
 function ddiff(d){return Math.floor((Date.now()-new Date(d))/86400000);}
 function waLink(phone,name,date,time){const n=phone.replace(/[^0-9]/g,"");return"https://wa.me/"+n+"?text="+encodeURIComponent("Bonjour "+name+" - Denti Luxe - RDV du "+fmtDate(date)+(time?" a "+time:"")+". Merci");}
+function waRelance(r){const n=(r.phone||"").replace(/[^0-9]/g,"");const tr=(r.treatment||"").trim();const soin=tr?tr.toLowerCase():"un rendez-vous";const msg="Bonjour "+r.name+" \u{1F60A}\n\nC'est l'équipe *Denti Luxe* ✨\nOn a gardé précieusement votre place pour "+soin+" \u{1F9B7}\n\nOn adorerait vous accompagner vers un sourire éclatant. Nos créneaux partent vite cette semaine — souhaitez-vous qu'on vous réserve le vôtre ?\n\nRépondez simplement *OUI* et on s'occupe de tout. À très vite ! \u{1F31F}";return"https://wa.me/"+n+"?text="+encodeURIComponent(msg);}
 const DR=[
   {id:1780070095163,name:"Chouaib",teeth:16,price:1500,date:"2026-05-28",time:"17:30",phone:"+212 714-440124",source:"Instagram",status:"confirmed",treatment:"Facettes composites",notes:"",returnPatient:false},
   {id:1780070249991,name:"Mouna",teeth:16,price:2000,date:"2026-05-29",time:"16:30",phone:"+212 653-814391",source:"Instagram",status:"confirmed",treatment:"Facettes composites",notes:"",returnPatient:false},
@@ -478,7 +479,7 @@ export default function App(){
                 <div style={{display:"flex",gap:6,alignItems:"center",justifyContent:"space-between",marginTop:9,paddingTop:9,borderTop:"1px solid var(--nb)"}}>
                   <div style={{display:"flex",gap:6}}>
                     <a href={"tel:"+rdv.phone} style={{display:"inline-flex",alignItems:"center",gap:6,fontSize:12,color:"var(--go)",textDecoration:"none",background:"rgba(203,170,106,0.08)",border:"1px solid rgba(203,170,106,0.2)",borderRadius:9,padding:"6px 11px",fontWeight:600}}><Ic n="phone" s={13}/> Tel</a>
-                    <a href={waLink(rdv.phone,rdv.name,rdv.date,rdv.time)} target="_blank" rel="noreferrer" style={{display:"inline-flex",alignItems:"center",gap:6,fontSize:12,color:"#25D366",textDecoration:"none",background:"rgba(37,211,102,0.08)",border:"1px solid rgba(37,211,102,0.2)",borderRadius:9,padding:"6px 11px",fontWeight:600}}><Ic n="wa" s={13}/> WA</a>
+                    <a href={rdv.status==="pending"?waRelance(rdv):waLink(rdv.phone,rdv.name,rdv.date,rdv.time)} target="_blank" rel="noreferrer" style={{display:"inline-flex",alignItems:"center",gap:6,fontSize:12,color:"#25D366",textDecoration:"none",background:"rgba(37,211,102,0.08)",border:"1px solid rgba(37,211,102,0.2)",borderRadius:9,padding:"6px 11px",fontWeight:600}}><Ic n="wa" s={13}/> {rdv.status==="pending"?"Relancer":"WA"}</a>
                   </div>
                   <div style={{display:"flex",gap:5}}>
                     {cdd===rdv.id?(
@@ -969,7 +970,7 @@ export default function App(){
                 <div key={r.id} style={{background:"rgba(201,168,76,0.05)",border:"1px solid rgba(201,168,76,0.2)",borderRadius:14,padding:"12px 14px",marginBottom:8,display:"flex",alignItems:"center",gap:10}}>
                   <div style={{width:34,height:34,borderRadius:10,background:"rgba(201,168,76,0.1)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,color:"var(--go)",flexShrink:0,fontSize:16}}>{r.name[0].toUpperCase()}</div>
                   <div style={{flex:1}}><div style={{fontWeight:700,fontSize:14}}>{r.name}</div><div style={{fontSize:12,color:"var(--dm)"}}>{fmtDate(r.date)} - {ddiff(r.date)}j sans reponse</div></div>
-                  <a href={waLink(r.phone,r.name,r.date,r.time)} target="_blank" rel="noreferrer" style={{display:"inline-flex",alignItems:"center",gap:6,background:"rgba(37,211,102,0.1)",border:"1px solid rgba(37,211,102,0.25)",borderRadius:9,padding:"8px 13px",color:"#25D366",fontSize:12,textDecoration:"none",fontWeight:700}}><Ic n="wa" s={14}/> Relancer</a>
+                  <a href={waRelance(r)} target="_blank" rel="noreferrer" style={{display:"inline-flex",alignItems:"center",gap:6,background:"rgba(37,211,102,0.1)",border:"1px solid rgba(37,211,102,0.25)",borderRadius:9,padding:"8px 13px",color:"#25D366",fontSize:12,textDecoration:"none",fontWeight:700}}><Ic n="wa" s={14}/> Relancer</a>
                 </div>
               ))}
             </div>
@@ -982,7 +983,7 @@ export default function App(){
                   <div style={{width:34,height:34,borderRadius:10,background:"rgba(255,77,109,0.1)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,color:"var(--rd)",flexShrink:0,fontSize:16}}>{r.name[0].toUpperCase()}</div>
                   <div style={{flex:1}}><div style={{fontWeight:700,fontSize:14}}>{r.name}</div><div style={{fontSize:12,color:"var(--dm)"}}>{fmtDate(r.date)} - {ddiff(r.date)}j</div></div>
                   <div style={{display:"flex",gap:6}}>
-                    <a href={waLink(r.phone,r.name,r.date,r.time)} target="_blank" rel="noreferrer" style={{display:"inline-flex",alignItems:"center",gap:5,background:"rgba(37,211,102,0.1)",border:"1px solid rgba(37,211,102,0.2)",borderRadius:9,padding:"7px 11px",color:"#25D366",fontSize:11,textDecoration:"none",fontWeight:700}}><Ic n="wa" s={13}/> WA</a>
+                    <a href={waRelance(r)} target="_blank" rel="noreferrer" style={{display:"inline-flex",alignItems:"center",gap:5,background:"rgba(37,211,102,0.1)",border:"1px solid rgba(37,211,102,0.2)",borderRadius:9,padding:"7px 11px",color:"#25D366",fontSize:11,textDecoration:"none",fontWeight:700}}><Ic n="wa" s={13}/> Relancer</a>
                     <button className="ab" title="Modifier" onClick={()=>he(r)}><Ic n="edit" s={15}/></button>
                   </div>
                 </div>
