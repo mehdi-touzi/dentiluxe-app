@@ -253,7 +253,7 @@ export default function App(){
       <div className="hd" style={{padding:"52px 18px 14px",background:"linear-gradient(180deg,rgba(13,27,48,0.98),var(--nv))",borderBottom:"1px solid var(--nb)"}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <div style={{display:"flex",alignItems:"center",gap:12}}>
-            <div style={{width:44,height:44,borderRadius:13,background:"linear-gradient(155deg,#1B2230,#0E131C)",border:"1px solid rgba(203,170,106,0.35)",display:"flex",alignItems:"center",justifyContent:"center",color:"var(--go)",boxShadow:"0 4px 14px rgba(0,0,0,0.4)"}}><Ic n="tooth" s={24} sw={1.7}/></div>
+            <img src="/logo.png" alt="Denti Luxe" width={44} height={44} style={{width:44,height:44,borderRadius:12,objectFit:"contain",background:"#0E131C",border:"1px solid rgba(203,170,106,0.3)",boxShadow:"0 4px 14px rgba(0,0,0,0.4)"}}/>
             <div>
               <div className="gg" style={{fontFamily:"'Playfair Display',serif",fontSize:21,fontWeight:700,lineHeight:1,letterSpacing:.3}}>Denti Luxe</div>
               <div style={{fontSize:9,color:"var(--mt)",letterSpacing:2,textTransform:"uppercase",marginTop:4}}>RDV & Commissions</div>
