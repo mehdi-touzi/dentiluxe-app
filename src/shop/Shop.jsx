@@ -4,8 +4,7 @@ import { useState, useMemo } from "react";
    CONFIGURATION — modifie ces valeurs facilement
    ============================================================ */
 // Numéro WhatsApp qui reçoit les commandes (format international, sans +, sans espaces).
-// Exemple Maroc : 2126XXXXXXXX
-const WA_NUMBER = "2126XXXXXXXX";
+const WA_NUMBER = "212772207947";
 
 const PRODUCT = {
   name: "Kit Blanchiment Denti Luxe",
@@ -14,14 +13,27 @@ const PRODUCT = {
   oldPrice: 499,     // ancien prix barré (DH) — mets 0 pour le masquer
   currency: "DH",
   // Photos : dépose tes images dans le dossier /public puis mets les chemins ici
-  // (ex: "/kit1.jpg"). Laisse vide pour afficher un visuel placeholder.
+  // (ex: "/kit1.jpg"). Laisse vide pour afficher le visuel logo.
   photos: [],
 };
 
+const STATS = [
+  { v: "3 370+", l: "abonnés" },
+  { v: "4.9/5", l: "satisfaction" },
+  { v: "+1 200", l: "sourires" },
+];
+
 const REVIEWS = [
   { name: "Salma", city: "Rabat", txt: "Résultat visible en 5 jours, mes dents sont vraiment plus blanches. Je recommande à 100% !" },
-  { name: "Yassine", city: "Témara", txt: "Facile à utiliser et livraison rapide. Paiement à la livraison, j'ai payé une fois reçu. Top." },
+  { name: "Yassine", city: "Témara", txt: "Facile à utiliser et livraison rapide. J'ai payé une fois reçu. Top." },
   { name: "Imane", city: "Casablanca", txt: "J'avais peur que ça abîme mes dents mais non, aucune sensibilité. Sourire de star ✨" },
+];
+
+const FAQ = [
+  { q: "Est-ce que ça abîme l'émail ?", a: "Non. La formule est douce et respecte l'émail. Utilisé selon la notice, il n'y a pas de risque pour tes dents." },
+  { q: "En combien de temps je vois les résultats ?", a: "La plupart de nos clients voient une différence dès 5 à 7 jours, à raison d'une utilisation par jour." },
+  { q: "Comment je paie ?", a: "Tu paies à la livraison (cash), une fois le colis reçu chez toi. Aucune avance." },
+  { q: "Vous livrez où ?", a: "Partout au Maroc, en 24 à 72h selon ta ville." },
 ];
 
 /* ============================================================ */
@@ -32,19 +44,23 @@ const CSS = `${FONTS}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{background:var(--nv);}
 input,select,button,textarea{outline:none;font-family:'DM Sans',sans-serif;}
-.wrap{max-width:560px;margin:0 auto;font-family:'DM Sans',sans-serif;color:var(--tx);background:var(--nv);min-height:100vh;padding-bottom:84px;}
+.wrap{max-width:560px;margin:0 auto;font-family:'DM Sans',sans-serif;color:var(--tx);background:var(--nv);min-height:100vh;padding-bottom:88px;overflow:hidden;}
 .gg{background:linear-gradient(95deg,var(--go),var(--gl));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:linear-gradient(180deg,var(--gl),var(--go));color:#16110A;border:none;border-radius:14px;padding:16px;font-weight:800;font-size:16px;cursor:pointer;width:100%;box-shadow:0 6px 20px rgba(203,170,106,0.3);letter-spacing:.2px;transition:transform .12s;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:linear-gradient(180deg,var(--gl),var(--go));color:#16110A;border:none;border-radius:14px;padding:16px;font-weight:800;font-size:16px;cursor:pointer;width:100%;box-shadow:0 6px 20px rgba(203,170,106,0.3);letter-spacing:.2px;transition:transform .12s;text-decoration:none;}
 .btn:active{transform:translateY(1px);}
-.btnwa{background:#25D366;color:#04210F;box-shadow:0 6px 20px rgba(37,211,102,0.32);}
+.btnwa{background:#25D366;color:#04210F;box-shadow:0 6px 22px rgba(37,211,102,0.34);}
 .inp{width:100%;background:var(--nv3);border:1px solid var(--nb);border-radius:12px;padding:13px 15px;color:var(--tx);font-size:15px;transition:border-color .15s,box-shadow .15s;}
 .inp:focus{border-color:var(--go);box-shadow:0 0 0 3px rgba(203,170,106,0.12);}
 .inp::placeholder{color:var(--mt);}
 .card{background:var(--nv2);border:1px solid var(--nb);border-radius:16px;padding:16px;}
-.sticky{position:fixed;bottom:0;left:0;right:0;z-index:50;background:rgba(9,13,20,0.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--nb);padding:12px 16px calc(12px + env(safe-area-inset-bottom));}
+.sticky{position:fixed;bottom:0;left:0;right:0;z-index:50;background:rgba(9,13,20,0.9);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--nb);padding:12px 16px calc(12px + env(safe-area-inset-bottom));}
 .sticky .in{max-width:560px;margin:0 auto;display:flex;align-items:center;gap:12px;}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.55;}}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--gn);animation:pulse 1.6s infinite;}
+@keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.logo-h{animation:floaty 4s ease-in-out infinite;}
+.glow{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(203,170,106,0.22),transparent 70%);pointer-events:none;}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--nb),transparent);margin:26px 0;}
 svg{display:block;}`;
 
 const PATHS = {
@@ -58,7 +74,8 @@ const PATHS = {
   wa: 'M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z',
   minus: 'M5 12h14',
   plus: 'M12 5v14M5 12h14',
-  tooth: 'M7 3C4.8 3 3.5 4.8 3.7 7.4c.3 3.4 1 5 1.6 8.6.3 1.7.6 4 1.7 4 .9 0 1-1.7 1.3-3.4.3-1.6.5-2.6 1.7-2.6s1.4 1 1.7 2.6c.3 1.7.4 3.4 1.3 3.4 1.1 0 1.4-2.3 1.7-4 .6-3.6 1.3-5.2 1.6-8.6C20.5 4.8 19.2 3 17 3c-1.8 0-2.8 1-5 1S8.8 3 7 3z',
+  chev: 'M6 9l6 6 6-6',
+  bolt: 'M13 2L3 14h9l-1 8 10-12h-9z',
 };
 function Ic({ n, s = 18, sw = 1.9, fill = "none", style }) {
   const d = PATHS[n]; if (!d) return null;
@@ -72,8 +89,10 @@ export default function Shop() {
   const [qty, setQty] = useState(1);
   const [f, setF] = useState({ name: "", phone: "", city: "" });
   const [err, setErr] = useState("");
+  const [open, setOpen] = useState(null);
   const total = useMemo(() => qty * PRODUCT.price, [qty]);
   const discount = PRODUCT.oldPrice > 0 ? Math.round((1 - PRODUCT.price / PRODUCT.oldPrice) * 100) : 0;
+  const save = PRODUCT.oldPrice > 0 ? (PRODUCT.oldPrice - PRODUCT.price) * qty : 0;
 
   function order() {
     if (!f.name.trim() || !f.phone.trim() || !f.city.trim()) {
@@ -94,10 +113,10 @@ export default function Shop() {
   }
 
   const benefits = [
-    { n: "smile", t: "Dents plus blanches", d: "Jusqu'à plusieurs teintes en moins de 7 jours" },
+    { n: "smile", t: "Dents plus blanches", d: "Plusieurs teintes en moins de 7 jours" },
     { n: "shield", t: "Sans sensibilité", d: "Formule douce, respecte l'émail" },
     { n: "spark", t: "Résultat pro à la maison", d: "Gel + lampe LED, simple à utiliser" },
-    { n: "tooth", t: "Signé Denti Luxe", d: "La marque référence du sourire" },
+    { n: "star", t: "Signé Denti Luxe", d: "La marque référence du sourire" },
   ];
   const steps = [
     "Applique le gel sur la gouttière",
@@ -115,55 +134,59 @@ export default function Shop() {
       <style>{CSS}</style>
 
       {/* Bandeau annonce */}
-      <div style={{ background: "linear-gradient(90deg,rgba(203,170,106,0.14),rgba(203,170,106,0.06))", borderBottom: "1px solid var(--nb)", padding: "9px 16px", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, fontSize: 12, fontWeight: 600, color: "var(--gl)" }}>
+      <div style={{ background: "linear-gradient(90deg,rgba(203,170,106,0.16),rgba(203,170,106,0.05))", borderBottom: "1px solid var(--nb)", padding: "9px 16px", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, fontSize: 12, fontWeight: 600, color: "var(--gl)" }}>
         <span className="dot" /> Offre de lancement {discount > 0 ? `· -${discount}%` : ""} · Paiement à la livraison
       </div>
 
-      <div style={{ padding: "20px 16px 0" }}>
-        {/* En-tête marque */}
-        <div style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 18 }}>
-          <div style={{ width: 42, height: 42, borderRadius: 12, background: "linear-gradient(155deg,#1B2230,#0E131C)", border: "1px solid rgba(203,170,106,0.35)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--go)" }}><Ic n="tooth" s={23} sw={1.7} /></div>
-          <div>
-            <div className="gg" style={{ fontFamily: "'Playfair Display',serif", fontSize: 19, fontWeight: 700, lineHeight: 1 }}>Denti Luxe</div>
-            <div style={{ fontSize: 9, color: "var(--mt)", letterSpacing: 2, textTransform: "uppercase", marginTop: 3 }}>Boutique officielle</div>
-          </div>
-        </div>
-
-        {/* Hero */}
-        <h1 style={{ fontFamily: "'Playfair Display',serif", fontSize: 28, fontWeight: 700, lineHeight: 1.2, marginBottom: 8 }}>
+      {/* HERO */}
+      <div style={{ position: "relative", textAlign: "center", padding: "30px 16px 6px" }}>
+        <div className="glow" style={{ top: -30, left: "50%", transform: "translateX(-50%)", width: 320, height: 320 }} />
+        <img className="logo-h" src="/logo.png" alt="Denti Luxe" width={130} height={130} style={{ width: 130, height: 130, objectFit: "contain", margin: "0 auto", filter: "drop-shadow(0 10px 24px rgba(0,0,0,0.5))", position: "relative" }} />
+        <h1 style={{ fontFamily: "'Playfair Display',serif", fontSize: 27, fontWeight: 700, lineHeight: 1.22, margin: "16px auto 10px", maxWidth: 420, position: "relative" }}>
           {PRODUCT.tagline}
         </h1>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-          <Stars /><span style={{ fontSize: 12, color: "var(--dm)" }}>+1 200 sourires transformés</span>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 18, position: "relative" }}>
+          <Stars /><span style={{ fontSize: 12, color: "var(--dm)" }}>noté 4.9/5 par +1 200 clients</span>
         </div>
 
+        {/* Stat strip */}
+        <div style={{ display: "flex", gap: 10, position: "relative" }}>
+          {STATS.map(s => (
+            <div key={s.l} className="card" style={{ flex: 1, padding: "11px 6px", textAlign: "center" }}>
+              <div className="gg" style={{ fontSize: 17, fontWeight: 900, fontFamily: "'Playfair Display',serif" }}>{s.v}</div>
+              <div style={{ fontSize: 10, color: "var(--mt)", textTransform: "uppercase", letterSpacing: .5, marginTop: 2 }}>{s.l}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ padding: "20px 16px 0" }}>
         {/* Visuel produit */}
-        <div style={{ position: "relative", borderRadius: 18, overflow: "hidden", border: "1px solid var(--nb)", marginBottom: 16, background: "linear-gradient(155deg,#161D2A,#0E131C)", aspectRatio: "1/1", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ position: "relative", borderRadius: 20, overflow: "hidden", border: "1px solid var(--nb)", marginBottom: 16, background: "radial-gradient(circle at 50% 35%,#1A2231,#0C111A)", aspectRatio: "4/3", display: "flex", alignItems: "center", justifyContent: "center" }}>
           {PRODUCT.photos.length > 0 ? (
             <img src={PRODUCT.photos[0]} alt={PRODUCT.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           ) : (
-            <div style={{ textAlign: "center", color: "var(--mt)", padding: 24 }}>
-              <div style={{ color: "var(--go)", marginBottom: 10, display: "flex", justifyContent: "center" }}><Ic n="tooth" s={64} sw={1.3} /></div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "var(--dm)" }}>{PRODUCT.name}</div>
-              <div style={{ fontSize: 11, marginTop: 6 }}>Ajoute tes photos produit dans /public</div>
+            <div style={{ textAlign: "center", padding: 24 }}>
+              <img src="/logo.png" alt="" width={120} height={120} style={{ width: 120, height: 120, objectFit: "contain", opacity: .95 }} />
+              <div style={{ fontSize: 11, color: "var(--mt)", marginTop: 8 }}>Ajoute tes photos produit dans /public</div>
             </div>
           )}
-          {discount > 0 && <div style={{ position: "absolute", top: 12, left: 12, background: "var(--rd)", color: "#fff", fontWeight: 800, fontSize: 13, padding: "5px 11px", borderRadius: 9 }}>-{discount}%</div>}
+          {discount > 0 && <div style={{ position: "absolute", top: 12, left: 12, background: "var(--rd)", color: "#fff", fontWeight: 800, fontSize: 13, padding: "5px 11px", borderRadius: 9, boxShadow: "0 4px 12px rgba(228,90,110,0.4)" }}>-{discount}%</div>}
         </div>
 
         {/* Prix + CTA */}
-        <div className="card" style={{ marginBottom: 16 }}>
-          <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 8 }}>{PRODUCT.name}</div>
+        <div className="card" style={{ marginBottom: 16, border: "1px solid rgba(203,170,106,0.3)" }}>
+          <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>{PRODUCT.name}</div>
           <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 4 }}>
-            <span style={{ fontSize: 32, fontWeight: 900 }} className="gg">{PRODUCT.price} {PRODUCT.currency}</span>
+            <span style={{ fontSize: 34, fontWeight: 900 }} className="gg">{PRODUCT.price} {PRODUCT.currency}</span>
             {PRODUCT.oldPrice > 0 && <span style={{ fontSize: 16, color: "var(--mt)", textDecoration: "line-through" }}>{PRODUCT.oldPrice} {PRODUCT.currency}</span>}
           </div>
-          <div style={{ fontSize: 12, color: "var(--gn)", fontWeight: 600, marginBottom: 14, display: "flex", alignItems: "center", gap: 6 }}><Ic n="check" s={14} sw={2.4} /> En stock · Livraison 24–72h</div>
+          <div style={{ fontSize: 12, color: "var(--gn)", fontWeight: 600, marginBottom: 14, display: "flex", alignItems: "center", gap: 6 }}><Ic n="check" s={14} sw={2.4} /> En stock · Livraison 24–72h · Paiement à la livraison</div>
           <a href="#commande" className="btn"><Ic n="wa" s={18} /> Commander maintenant</a>
         </div>
 
         {/* Bénéfices */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 18 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 8 }}>
           {benefits.map(b => (
             <div key={b.t} className="card" style={{ padding: 14 }}>
               <div style={{ color: "var(--go)", marginBottom: 8 }}><Ic n={b.n} s={22} /></div>
@@ -173,36 +196,44 @@ export default function Shop() {
           ))}
         </div>
 
+        <div className="divider" />
+
         {/* Comment ça marche */}
-        <div className="card" style={{ marginBottom: 18 }}>
-          <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 14 }}>Comment ça marche</div>
+        <div style={{ fontSize: 17, fontWeight: 800, marginBottom: 14 }}>Comment ça marche</div>
+        <div className="card" style={{ marginBottom: 8 }}>
           {steps.map((s, i) => (
             <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: i < steps.length - 1 ? 12 : 0 }}>
-              <div style={{ width: 30, height: 30, borderRadius: 9, background: "rgba(203,170,106,0.12)", color: "var(--go)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 14, flexShrink: 0 }}>{i + 1}</div>
-              <div style={{ fontSize: 13, color: "var(--tx)" }}>{s}</div>
+              <div style={{ width: 32, height: 32, borderRadius: 10, background: "rgba(203,170,106,0.12)", color: "var(--go)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 14, flexShrink: 0 }}>{i + 1}</div>
+              <div style={{ fontSize: 14, color: "var(--tx)" }}>{s}</div>
             </div>
           ))}
         </div>
+
+        <div className="divider" />
 
         {/* Avis */}
-        <div style={{ marginBottom: 18 }}>
-          <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }}>Ils ont adopté Denti Luxe <Stars s={13} /></div>
-          {REVIEWS.map((r, i) => (
-            <div key={i} className="card" style={{ marginBottom: 10, padding: 14 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 7 }}>
-                <div style={{ width: 34, height: 34, borderRadius: "50%", background: "rgba(203,170,106,0.12)", color: "var(--go)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 14 }}>{r.name[0]}</div>
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 700 }}>{r.name} <span style={{ color: "var(--gn)", fontSize: 11, fontWeight: 600 }}>· Achat vérifié</span></div>
-                  <div style={{ fontSize: 11, color: "var(--mt)" }}>{r.city}</div>
-                </div>
-              </div>
-              <div style={{ fontSize: 13, color: "var(--dm)", lineHeight: 1.6 }}>« {r.txt} »</div>
-            </div>
-          ))}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+          <div style={{ fontSize: 17, fontWeight: 800 }}>Avis clients</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 7 }}><Stars s={13} /><span style={{ fontSize: 12, color: "var(--dm)", fontWeight: 600 }}>4.9/5</span></div>
         </div>
+        {REVIEWS.map((r, i) => (
+          <div key={i} className="card" style={{ marginBottom: 10, padding: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 7 }}>
+              <div style={{ width: 34, height: 34, borderRadius: "50%", background: "rgba(203,170,106,0.12)", color: "var(--go)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 14 }}>{r.name[0]}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 13, fontWeight: 700 }}>{r.name} <span style={{ color: "var(--gn)", fontSize: 11, fontWeight: 600 }}>· Achat vérifié</span></div>
+                <div style={{ fontSize: 11, color: "var(--mt)" }}>{r.city}</div>
+              </div>
+              <Stars s={11} />
+            </div>
+            <div style={{ fontSize: 13, color: "var(--dm)", lineHeight: 1.6 }}>« {r.txt} »</div>
+          </div>
+        ))}
+
+        <div className="divider" />
 
         {/* Garanties */}
-        <div className="card" style={{ marginBottom: 18, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+        <div className="card" style={{ marginBottom: 26, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
           {guarantees.map(g => (
             <div key={g.t} style={{ textAlign: "center" }}>
               <div style={{ color: "var(--go)", display: "flex", justifyContent: "center", marginBottom: 7 }}><Ic n={g.n} s={22} /></div>
@@ -212,8 +243,13 @@ export default function Shop() {
         </div>
 
         {/* Formulaire de commande */}
-        <div id="commande" className="card" style={{ marginBottom: 18, border: "1px solid rgba(203,170,106,0.35)" }}>
-          <div style={{ fontSize: 18, fontWeight: 800, marginBottom: 4 }}>Commander en 30 secondes</div>
+        <div id="commande" className="card" style={{ marginBottom: 26, border: "1px solid rgba(203,170,106,0.4)", boxShadow: "0 10px 36px rgba(0,0,0,0.4)" }}>
+          {discount > 0 && (
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(228,90,110,0.12)", border: "1px solid rgba(228,90,110,0.3)", color: "#F08699", borderRadius: 8, padding: "4px 10px", fontSize: 11, fontWeight: 700, marginBottom: 12 }}>
+              <Ic n="bolt" s={12} fill="currentColor" sw={0} /> Offre limitée · -{discount}%
+            </div>
+          )}
+          <div style={{ fontSize: 19, fontWeight: 800, marginBottom: 4 }}>Commander en 30 secondes</div>
           <div style={{ fontSize: 12, color: "var(--dm)", marginBottom: 16 }}>Tu paies <b style={{ color: "var(--gl)" }}>à la livraison</b>. Remplis et on te recontacte sur WhatsApp.</div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
@@ -231,8 +267,11 @@ export default function Shop() {
             </div>
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "4px 2px" }}>
-              <span style={{ fontSize: 13, color: "var(--dm)" }}>Total à payer</span>
-              <span style={{ fontSize: 22, fontWeight: 900 }} className="gg">{total} {PRODUCT.currency}</span>
+              <div>
+                <div style={{ fontSize: 13, color: "var(--dm)" }}>Total à payer</div>
+                {save > 0 && <div style={{ fontSize: 11, color: "var(--gn)", fontWeight: 600 }}>Tu économises {save} {PRODUCT.currency}</div>}
+              </div>
+              <span style={{ fontSize: 24, fontWeight: 900 }} className="gg">{total} {PRODUCT.currency}</span>
             </div>
 
             {err && <div style={{ fontSize: 12, color: "var(--rd)", fontWeight: 600 }}>{err}</div>}
@@ -241,8 +280,23 @@ export default function Shop() {
           </div>
         </div>
 
-        <div style={{ textAlign: "center", fontSize: 11, color: "var(--mt)", paddingBottom: 8 }}>
-          © {new Date().getFullYear()} Denti Luxe · Rabat • Témara
+        {/* FAQ */}
+        <div style={{ fontSize: 17, fontWeight: 800, marginBottom: 14 }}>Questions fréquentes</div>
+        <div style={{ marginBottom: 24 }}>
+          {FAQ.map((item, i) => (
+            <div key={i} className="card" style={{ marginBottom: 8, padding: 0, overflow: "hidden" }}>
+              <button onClick={() => setOpen(open === i ? null : i)} style={{ width: "100%", background: "none", border: "none", color: "var(--tx)", padding: "14px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, cursor: "pointer", textAlign: "left", fontSize: 13, fontWeight: 700 }}>
+                {item.q}
+                <span style={{ color: "var(--go)", transform: open === i ? "rotate(180deg)" : "none", transition: "transform .2s", flexShrink: 0 }}><Ic n="chev" s={18} /></span>
+              </button>
+              {open === i && <div style={{ padding: "0 16px 14px", fontSize: 12, color: "var(--dm)", lineHeight: 1.6 }}>{item.a}</div>}
+            </div>
+          ))}
+        </div>
+
+        <div style={{ textAlign: "center", paddingBottom: 10 }}>
+          <img src="/logo.png" alt="" width={48} height={48} style={{ width: 48, height: 48, objectFit: "contain", opacity: .85, margin: "0 auto 8px" }} />
+          <div style={{ fontSize: 11, color: "var(--mt)" }}>© {new Date().getFullYear()} Denti Luxe · Rabat • Témara</div>
         </div>
       </div>
 
