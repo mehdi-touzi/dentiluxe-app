@@ -3,8 +3,8 @@
 // (VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY). Tant que c'est vide, l'app
 // fonctionne normalement en stockage local (aucune perte de fonctionnalite).
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://zhpnbybyflozjdxoclrj.supabase.co";
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpocG5ieWJ5ZmxvempkeG9jbHJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5OTQ2ODcsImV4cCI6MjA5NzU3MDY4N30.BQIvivpGGGi9NAoZk_Pj8jfFmLFMI9JSgmFlWe25vDw";
 
 // Un seul enregistrement partage pour ce compte (app mono-utilisateur).
 const ROW_ID = "main";
