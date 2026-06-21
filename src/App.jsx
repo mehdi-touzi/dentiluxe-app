@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
+import { cloudEnabled, cloudLoad, cloudSave } from "./cloud";
 const CR=0.20,U2M=10;
 const SC={confirmed:{label:"Confirme",emoji:"OK",color:"#00C896"},pending:{label:"En attente",emoji:"...",color:"#F5A623"},cancelled:{label:"Annule",emoji:"X",color:"#FF4D6D"}};
 const SRCO=["Instagram","WhatsApp","Bouche-a-oreille","Autre"];
@@ -85,6 +86,9 @@ const IP={
   user:'M20 21a8 8 0 1 0-16 0M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8',
   shield:'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z',
   gift:'M20 12v9H4v-9M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z',
+  cloud:'M17.5 19a4.5 4.5 0 1 0-.9-8.9A6 6 0 0 0 5.2 11 4 4 0 0 0 6 19z',
+  cloudok:'M17.5 19a4.5 4.5 0 1 0-.9-8.9A6 6 0 0 0 5.2 11 4 4 0 0 0 6 19M9.5 14.5l2 2 3.5-3.5',
+  cloudx:'M17.5 19a4.5 4.5 0 1 0-.9-8.9A6 6 0 0 0 5.2 11 4 4 0 0 0 6 19M10 13l4 4M14 13l-4 4',
 };
 function Ic({n,s=16,sw=1.9,fill="none",style}){const d=IP[n];if(!d)return null;return <svg width={s} height={s} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,...style}}><path d={d}/></svg>;}
 
@@ -159,9 +163,30 @@ export default function App(){
   const[sel,setSel]=useState(null);
   const[scen,setScen]=useState(5);
   const[banner,setBanner]=useState(true);
-  function sr(v){const u=typeof v==="function"?v(rdvs):v;setRR(u);save("dl_rdvs",u);}
-  function sp(v){const u=typeof v==="function"?v(pubs):v;setPR(u);save("dl_pubs",u);}
-  function sg(v){setGR(v);save("dl_goal",v);}
+  const[sync,setSync]=useState(cloudEnabled?"sync":"off");
+  const didInit=useRef(false);
+  function pushCloud(next){if(!cloudEnabled)return;setSync("sync");cloudSave(next).then(()=>setSync("ok")).catch(()=>setSync("err"));}
+  function sr(v){const u=typeof v==="function"?v(rdvs):v;setRR(u);save("dl_rdvs",u);pushCloud({rdvs:u,pubs,goal});}
+  function sp(v){const u=typeof v==="function"?v(pubs):v;setPR(u);save("dl_pubs",u);pushCloud({rdvs,pubs:u,goal});}
+  function sg(v){setGR(v);save("dl_goal",v);pushCloud({rdvs,pubs,goal:v});}
+  useEffect(()=>{
+    if(!cloudEnabled||didInit.current)return;
+    didInit.current=true;
+    (async()=>{
+      try{
+        const remote=await cloudLoad();
+        if(remote&&Array.isArray(remote.rdvs)){
+          setRR(remote.rdvs);save("dl_rdvs",remote.rdvs);
+          if(Array.isArray(remote.pubs)){setPR(remote.pubs);save("dl_pubs",remote.pubs);}
+          if(remote.goal!=null){setGR(remote.goal);save("dl_goal",remote.goal);}
+        }else{
+          await cloudSave({rdvs,pubs,goal});
+        }
+        setSync("ok");
+      }catch{setSync("err");}
+    })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[]);
   function xp(){setIt(JSON.stringify({rdvs,pubs,goal,exportedAt:new Date().toISOString()},null,2));setIm("__x__");}
   function xr(){try{const p=JSON.parse(it);if(!p.rdvs||!p.pubs){setIm("Invalide");return;}sr(p.rdvs);sp(p.pubs);if(p.goal)sg(p.goal);setIm("OK");setIt("");setTimeout(()=>{setBk(false);setIm("");},1500);}catch{setIm("JSON invalide");}}
   const S=useMemo(()=>{
@@ -233,7 +258,8 @@ export default function App(){
               <div style={{fontSize:9,color:"var(--mt)",letterSpacing:2,textTransform:"uppercase",marginTop:4}}>RDV & Commissions</div>
             </div>
           </div>
-          <div style={{display:"flex",gap:8}}>
+          <div style={{display:"flex",gap:8,alignItems:"center"}}>
+            {sync!=="off"&&<span title={sync==="ok"?"Synchronisé dans le cloud":sync==="sync"?"Synchronisation…":"Hors-ligne (sauvegarde locale)"} style={{display:"inline-flex",alignItems:"center",color:sync==="ok"?"var(--gn)":sync==="err"?"var(--rd)":"var(--go)",opacity:sync==="sync"?0.6:1,transition:"opacity .3s"}}><Ic n={sync==="ok"?"cloudok":sync==="err"?"cloudx":"cloud"} s={18} sw={1.8}/></span>}
             {ac2>0&&<button onClick={()=>setTab("alertes")} style={{display:"inline-flex",alignItems:"center",gap:5,background:"rgba(228,90,110,0.12)",border:"1px solid rgba(228,90,110,0.3)",borderRadius:10,padding:"6px 11px",color:"var(--rd)",fontSize:12,fontWeight:800,cursor:"pointer"}}><Ic n="bell" s={13}/> {ac2}</button>}
             <button onClick={()=>setBk(true)} style={{display:"inline-flex",alignItems:"center",gap:5,background:"rgba(203,170,106,0.08)",border:"1px solid rgba(203,170,106,0.25)",borderRadius:10,padding:"6px 11px",color:"var(--go)",fontSize:11,fontWeight:700,cursor:"pointer"}}><Ic n="shield" s={13}/> Backup</button>
           </div>
