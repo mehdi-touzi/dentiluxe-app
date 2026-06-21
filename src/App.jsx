@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
+import { cloudEnabled, cloudLoad, cloudSave } from "./cloud";
 const CR=0.20,U2M=10;
 const SC={confirmed:{label:"Confirme",emoji:"OK",color:"#00C896"},pending:{label:"En attente",emoji:"...",color:"#F5A623"},cancelled:{label:"Annule",emoji:"X",color:"#FF4D6D"}};
 const SRCO=["Instagram","WhatsApp","Bouche-a-oreille","Autre"];
@@ -52,41 +53,90 @@ const DG=10000;
 
 function Donut({segs,size=100}){const tot=segs.reduce((s,x)=>s+x.value,0);if(!tot)return <div style={{width:size,height:size,borderRadius:"50%",background:"#142038"}}/>;let off=0;const r=40,cx=50,cy=50,ci=2*Math.PI*r;return <svg width={size} height={size} viewBox="0 0 100 100"><circle cx={cx} cy={cy} r={r} fill="none" stroke="#142038" strokeWidth={16}/>{segs.map((s,i)=>{const p=s.value/tot,d=p*ci,ro=off*360-90;off+=p;return<circle key={i} cx={cx} cy={cy} r={r} fill="none" stroke={s.color} strokeWidth={16} strokeDasharray={`${d} ${ci-d}`} transform={`rotate(${ro} ${cx} ${cy})`}/>;})}<text x={cx} y={cy} textAnchor="middle" dy="0.35em" fill="#EEE8D8" fontSize={12} fontWeight={700}>{tot}</text></svg>;}
 
-const CSS=`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700&display=swap');
-:root{--nv:#080F1E;--nv2:#0D1B30;--nv3:#142038;--nb:#1A2D4A;--go:#C9A84C;--gl:#E8C878;--tx:#EEE8D8;--dm:#7A8899;--mt:#2A3A50;--gn:#00C896;--or:#F5A623;--rd:#FF4D6D;--pu:#9B7FEA;}
-*{box-sizing:border-box;margin:0;padding:0;}
-::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:var(--nb);border-radius:2px;}
-input,select,textarea{outline:none;}
-.card{background:var(--nv2);border:1px solid var(--nb);border-radius:16px;padding:14px;margin-bottom:10px;position:relative;overflow:hidden;}
-.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px;}
+const IP={
+  home:'M3 9.5L12 3l9 6.5M5 9v11a1 1 0 0 0 1 1h3v-7h6v7h3a1 1 0 0 0 1-1V9',
+  cal:'M3 5a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM3 9h18M8 3v3M16 3v3',
+  money:'M12 2v20M16.5 6.5H9.75a3.25 3.25 0 0 0 0 6.5h4.5a3.25 3.25 0 0 1 0 6.5H7',
+  mega:'M3 10v4a1 1 0 0 0 1 1h2.5L12 19V5L6.5 9H4a1 1 0 0 0-1 1zM16 9a4 4 0 0 1 0 6',
+  bars:'M5 21V11M12 21V4M19 21v-7',
+  trend:'M3 17l6-6 4 4 8-8M15 7h6v6',
+  bell:'M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M10.3 21a2 2 0 0 0 3.4 0',
+  phone:'M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2 4.2 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.9.6 2.8.7A2 2 0 0 1 22 16.9z',
+  wa:'M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z',
+  search:'M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.3-4.3',
+  edit:'M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z',
+  trash:'M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M10 11v6M14 11v6',
+  copy:'M9 9h11a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2zM5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1',
+  swap:'M23 4v6h-6M1 20v-6h6M3.5 9a9 9 0 0 1 14.9-3.4L23 10M1 14l4.6 4.4A9 9 0 0 0 20.5 15',
+  tooth:'M7 3C4.8 3 3.5 4.8 3.7 7.4c.3 3.4 1 5 1.6 8.6.3 1.7.6 4 1.7 4 .9 0 1-1.7 1.3-3.4.3-1.6.5-2.6 1.7-2.6s1.4 1 1.7 2.6c.3 1.7.4 3.4 1.3 3.4 1.1 0 1.4-2.3 1.7-4 .6-3.6 1.3-5.2 1.6-8.6C20.5 4.8 19.2 3 17 3c-1.8 0-2.8 1-5 1S8.8 3 7 3z',
+  clock:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2',
+  note:'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h8M8 17h6',
+  award:'M12 15a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM8.2 13.9L7 23l5-3 5 3-1.2-9.1',
+  bulb:'M9 18h6M10 22h4M15.1 14c.2-1 .7-1.8 1.4-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.2 1.5 1.4 2.5',
+  zap:'M13 2L3 14h9l-1 8 10-12h-9z',
+  target:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',
+  rocket:'M5 13l-2 5 5-2M9 11a13 13 0 0 1 8-8 13 13 0 0 1-2 10l-3 2-5-5zM14 9a1 1 0 1 0 2 0 1 1 0 0 0-2 0',
+  plus:'M12 5v14M5 12h14',
+  x:'M18 6L6 18M6 6l12 12',
+  cl:'M15 18l-6-6 6-6',
+  cr:'M9 18l6-6-6-6',
+  up:'M12 19V5M6 11l6-6 6 6',
+  dn:'M12 5v14M6 13l6 6 6-6',
+  check:'M20 6L9 17l-4-4',
+  user:'M20 21a8 8 0 1 0-16 0M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8',
+  shield:'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z',
+  gift:'M20 12v9H4v-9M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z',
+  cloud:'M17.5 19a4.5 4.5 0 1 0-.9-8.9A6 6 0 0 0 5.2 11 4 4 0 0 0 6 19z',
+  cloudok:'M17.5 19a4.5 4.5 0 1 0-.9-8.9A6 6 0 0 0 5.2 11 4 4 0 0 0 6 19M9.5 14.5l2 2 3.5-3.5',
+  cloudx:'M17.5 19a4.5 4.5 0 1 0-.9-8.9A6 6 0 0 0 5.2 11 4 4 0 0 0 6 19M10 13l4 4M14 13l-4 4',
+};
+function Ic({n,s=16,sw=1.9,fill="none",style}){const d=IP[n];if(!d)return null;return <svg width={s} height={s} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,...style}}><path d={d}/></svg>;}
+
+const CSS=`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700&display=swap');
+:root{--nv:#090D14;--nv2:#10151E;--nv3:#171D28;--nb:#252D3B;--bh:#323C4D;--go:#CBAA6A;--gl:#E6D09A;--tx:#E9EBEF;--dm:#9097A5;--mt:#646D7D;--gn:#33BA86;--or:#E2A845;--rd:#E45A6E;--pu:#8C7BE0;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:var(--nv);}
+::-webkit-scrollbar{width:3px;height:3px;}::-webkit-scrollbar-thumb{background:var(--nb);border-radius:2px;}
+input,select,textarea,button{outline:none;font-family:'DM Sans',sans-serif;}
+.card{background:var(--nv2);border:1px solid var(--nb);border-radius:14px;padding:14px;margin-bottom:10px;position:relative;overflow:hidden;transition:border-color .2s;}
+.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;}
 .card.confirmed::before{background:var(--gn);}
 .card.pending::before{background:var(--or);}
 .card.cancelled::before{background:var(--rd);opacity:0.4;}
-.card.cancelled{opacity:0.45;}
-.tb{flex:1;padding:11px 4px;background:none;border:none;color:var(--dm);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;}
+.card.cancelled{opacity:0.5;}
+.tb{flex:1;padding:11px 4px;background:none;border:none;color:var(--dm);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s;letter-spacing:.2px;}
 .tb.on{color:var(--go);border-bottom-color:var(--go);}
-.inp{width:100%;background:var(--nv3);border:1px solid var(--nb);border-radius:12px;padding:12px 16px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;}
-.inp:focus{border-color:var(--go);}
-.btn{background:linear-gradient(135deg,var(--go),var(--gl));color:var(--nv);border:none;border-radius:13px;padding:14px;font-family:'DM Sans',sans-serif;font-weight:800;font-size:15px;cursor:pointer;width:100%;box-shadow:0 4px 18px rgba(201,168,76,0.3);}
-.btn2{background:var(--nv3);color:var(--tx);border:1px solid var(--nb);border-radius:13px;padding:14px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:15px;cursor:pointer;width:100%;}
-.fab{position:fixed;bottom:88px;right:18px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--go),var(--gl));border:none;color:var(--nv);font-size:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(201,168,76,0.5);z-index:50;}
-.ov{position:fixed;inset:0;background:rgba(2,6,14,0.92);z-index:100;display:flex;align-items:flex-end;}
-.sh{background:var(--nv2);border-radius:26px 26px 0 0;padding:24px 20px 44px;width:100%;max-height:93vh;overflow-y:auto;border-top:1px solid var(--nb);}
-.ch{padding:6px 12px;border-radius:20px;border:1px solid var(--nb);background:none;color:var(--dm);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;}
-.ch.on{background:rgba(201,168,76,0.1);color:var(--go);border-color:rgba(201,168,76,0.35);}
-.ab{background:var(--nv3);border:1px solid var(--nb);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:13px;}
-.bn{position:fixed;bottom:0;left:0;right:0;background:rgba(8,15,30,0.96);border-top:1px solid var(--nb);display:flex;z-index:40;backdrop-filter:blur(20px);}
+.inp{width:100%;background:var(--nv3);border:1px solid var(--nb);border-radius:11px;padding:12px 15px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;transition:border-color .15s,box-shadow .15s;}
+.inp:focus{border-color:var(--go);box-shadow:0 0 0 3px rgba(203,170,106,0.12);}
+.inp::placeholder{color:var(--mt);}
+.btn{background:linear-gradient(180deg,var(--gl),var(--go));color:#16110A;border:none;border-radius:12px;padding:14px;font-family:'DM Sans',sans-serif;font-weight:800;font-size:15px;cursor:pointer;width:100%;box-shadow:0 2px 10px rgba(203,170,106,0.22);letter-spacing:.2px;transition:transform .12s,box-shadow .12s;}
+.btn:active{transform:translateY(1px);}
+.btn2{background:var(--nv3);color:var(--tx);border:1px solid var(--nb);border-radius:12px;padding:14px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:15px;cursor:pointer;width:100%;transition:border-color .15s;}
+.btn2:active{border-color:var(--bh);}
+.fab{position:fixed;bottom:88px;right:18px;width:54px;height:54px;border-radius:16px;background:linear-gradient(180deg,var(--gl),var(--go));border:none;color:#16110A;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(203,170,106,0.4);z-index:50;transition:transform .12s;}
+.fab:active{transform:scale(0.94);}
+.ov{position:fixed;inset:0;background:rgba(4,7,12,0.78);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:100;display:flex;align-items:flex-end;animation:fade .2s ease;}
+@keyframes fade{from{opacity:0;}to{opacity:1;}}
+.sh{background:var(--nv2);border-radius:24px 24px 0 0;padding:22px 20px 44px;width:100%;max-height:93vh;overflow-y:auto;border-top:1px solid var(--nb);box-shadow:0 -10px 40px rgba(0,0,0,0.5);animation:rise .26s cubic-bezier(.2,.8,.2,1);}
+@keyframes rise{from{transform:translateY(24px);}to{transform:translateY(0);}}
+.ch{padding:6px 13px;border-radius:9px;border:1px solid var(--nb);background:none;color:var(--dm);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;}
+.ch.on{background:rgba(203,170,106,0.1);color:var(--go);border-color:rgba(203,170,106,0.4);}
+.ab{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:var(--nv3);border:1px solid var(--nb);border-radius:9px;cursor:pointer;color:var(--dm);transition:all .15s;}
+.ab:active{border-color:var(--bh);color:var(--tx);}
+.bn{position:fixed;bottom:0;left:0;right:0;background:rgba(9,13,20,0.92);border-top:1px solid var(--nb);display:flex;z-index:40;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding-bottom:env(safe-area-inset-bottom);}
 .pb{height:5px;background:var(--nv3);border-radius:3px;overflow:hidden;}
 .pbf{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--go),var(--gl));transition:width 0.7s;}
-.gg{background:linear-gradient(90deg,#C9A84C,#E8C878);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.bdg{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:800;}
-.hero{background:linear-gradient(135deg,#0A1A08,#0D1B30,#150F02);border:1px solid rgba(201,168,76,0.2);border-radius:20px;padding:20px;position:relative;overflow:hidden;box-shadow:0 6px 32px rgba(0,0,0,0.4);}
+.gg{background:linear-gradient(95deg,var(--go),var(--gl));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.bdg{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:7px;font-size:10px;font-weight:800;letter-spacing:.3px;}
+.hero{background:linear-gradient(155deg,#161D2A 0%,#0E131C 60%);border:1px solid var(--nb);border-radius:18px;padding:20px;position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,0.35);}
+.hero::after{content:'';position:absolute;top:-60px;right:-40px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(203,170,106,0.14),transparent 70%);pointer-events:none;}
 .sl{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:var(--nv3);outline:none;}
-.sl::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--go),var(--gl));cursor:pointer;box-shadow:0 2px 8px rgba(201,168,76,0.4);}
-.tp{animation:tpa 2s infinite;}
-@keyframes tpa{0%,100%{border-color:rgba(245,166,35,0.3);}50%{border-color:rgba(245,166,35,0.7);}}
-.sec{font-size:10px;font-weight:800;color:var(--mt);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
-.hd{position:sticky;top:0;z-index:30;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}`;
+.sl::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--gl),var(--go));cursor:pointer;box-shadow:0 2px 8px rgba(203,170,106,0.4);}
+.tp{animation:tpa 2.4s infinite;}
+@keyframes tpa{0%,100%{border-color:rgba(226,168,69,0.28);}50%{border-color:rgba(226,168,69,0.6);}}
+.sec{font-size:10px;font-weight:700;color:var(--mt);letter-spacing:1.6px;text-transform:uppercase;margin-bottom:10px;}
+.hd{position:sticky;top:0;z-index:30;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
+svg{display:block;}`;
 
 export default function App(){
   const[rdvs,setRR]=useState(()=>load("dl_rdvs",DR));
@@ -113,9 +163,30 @@ export default function App(){
   const[sel,setSel]=useState(null);
   const[scen,setScen]=useState(5);
   const[banner,setBanner]=useState(true);
-  function sr(v){const u=typeof v==="function"?v(rdvs):v;setRR(u);save("dl_rdvs",u);}
-  function sp(v){const u=typeof v==="function"?v(pubs):v;setPR(u);save("dl_pubs",u);}
-  function sg(v){setGR(v);save("dl_goal",v);}
+  const[sync,setSync]=useState(cloudEnabled?"sync":"off");
+  const didInit=useRef(false);
+  function pushCloud(next){if(!cloudEnabled)return;setSync("sync");cloudSave(next).then(()=>setSync("ok")).catch(()=>setSync("err"));}
+  function sr(v){const u=typeof v==="function"?v(rdvs):v;setRR(u);save("dl_rdvs",u);pushCloud({rdvs:u,pubs,goal});}
+  function sp(v){const u=typeof v==="function"?v(pubs):v;setPR(u);save("dl_pubs",u);pushCloud({rdvs,pubs:u,goal});}
+  function sg(v){setGR(v);save("dl_goal",v);pushCloud({rdvs,pubs,goal:v});}
+  useEffect(()=>{
+    if(!cloudEnabled||didInit.current)return;
+    didInit.current=true;
+    (async()=>{
+      try{
+        const remote=await cloudLoad();
+        if(remote&&Array.isArray(remote.rdvs)){
+          setRR(remote.rdvs);save("dl_rdvs",remote.rdvs);
+          if(Array.isArray(remote.pubs)){setPR(remote.pubs);save("dl_pubs",remote.pubs);}
+          if(remote.goal!=null){setGR(remote.goal);save("dl_goal",remote.goal);}
+        }else{
+          await cloudSave({rdvs,pubs,goal});
+        }
+        setSync("ok");
+      }catch{setSync("err");}
+    })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[]);
   function xp(){setIt(JSON.stringify({rdvs,pubs,goal,exportedAt:new Date().toISOString()},null,2));setIm("__x__");}
   function xr(){try{const p=JSON.parse(it);if(!p.rdvs||!p.pubs){setIm("Invalide");return;}sr(p.rdvs);sp(p.pubs);if(p.goal)sg(p.goal);setIm("OK");setIt("");setTimeout(()=>{setBk(false);setIm("");},1500);}catch{setIm("JSON invalide");}}
   const S=useMemo(()=>{
@@ -181,15 +252,16 @@ export default function App(){
       <div className="hd" style={{padding:"52px 18px 14px",background:"linear-gradient(180deg,rgba(13,27,48,0.98),var(--nv))",borderBottom:"1px solid var(--nb)"}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <div style={{display:"flex",alignItems:"center",gap:12}}>
-            <img src="/mnt/user-data/uploads/02013CE1-46ED-4B14-B46D-F1ECD2BFD98C.png" style={{width:42,height:42,borderRadius:12,objectFit:"cover"}} alt="DL"/>
+            <div style={{width:44,height:44,borderRadius:13,background:"linear-gradient(155deg,#1B2230,#0E131C)",border:"1px solid rgba(203,170,106,0.35)",display:"flex",alignItems:"center",justifyContent:"center",color:"var(--go)",boxShadow:"0 4px 14px rgba(0,0,0,0.4)"}}><Ic n="tooth" s={24} sw={1.7}/></div>
             <div>
-              <div className="gg" style={{fontFamily:"'Playfair Display',serif",fontSize:21,fontWeight:700,lineHeight:1}}>Denti Luxe</div>
-              <div style={{fontSize:9,color:"var(--mt)",letterSpacing:2,textTransform:"uppercase",marginTop:3}}>RDV & Commissions</div>
+              <div className="gg" style={{fontFamily:"'Playfair Display',serif",fontSize:21,fontWeight:700,lineHeight:1,letterSpacing:.3}}>Denti Luxe</div>
+              <div style={{fontSize:9,color:"var(--mt)",letterSpacing:2,textTransform:"uppercase",marginTop:4}}>RDV & Commissions</div>
             </div>
           </div>
-          <div style={{display:"flex",gap:8}}>
-            {ac2>0&&<button onClick={()=>setTab("alertes")} style={{background:"rgba(255,77,109,0.12)",border:"1px solid rgba(255,77,109,0.3)",borderRadius:20,padding:"6px 12px",color:"var(--rd)",fontSize:12,fontWeight:800,cursor:"pointer"}}>{String.fromCodePoint(0x1F514)} {ac2}</button>}
-            <button onClick={()=>setBk(true)} style={{background:"rgba(201,168,76,0.08)",border:"1px solid rgba(201,168,76,0.25)",borderRadius:20,padding:"6px 12px",color:"var(--go)",fontSize:11,fontWeight:700,cursor:"pointer"}}>Backup</button>
+          <div style={{display:"flex",gap:8,alignItems:"center"}}>
+            {sync!=="off"&&<span title={sync==="ok"?"Synchronisé dans le cloud":sync==="sync"?"Synchronisation…":"Hors-ligne (sauvegarde locale)"} style={{display:"inline-flex",alignItems:"center",color:sync==="ok"?"var(--gn)":sync==="err"?"var(--rd)":"var(--go)",opacity:sync==="sync"?0.6:1,transition:"opacity .3s"}}><Ic n={sync==="ok"?"cloudok":sync==="err"?"cloudx":"cloud"} s={18} sw={1.8}/></span>}
+            {ac2>0&&<button onClick={()=>setTab("alertes")} style={{display:"inline-flex",alignItems:"center",gap:5,background:"rgba(228,90,110,0.12)",border:"1px solid rgba(228,90,110,0.3)",borderRadius:10,padding:"6px 11px",color:"var(--rd)",fontSize:12,fontWeight:800,cursor:"pointer"}}><Ic n="bell" s={13}/> {ac2}</button>}
+            <button onClick={()=>setBk(true)} style={{display:"inline-flex",alignItems:"center",gap:5,background:"rgba(203,170,106,0.08)",border:"1px solid rgba(203,170,106,0.25)",borderRadius:10,padding:"6px 11px",color:"var(--go)",fontSize:11,fontWeight:700,cursor:"pointer"}}><Ic n="shield" s={13}/> Backup</button>
           </div>
         </div>
       </div>
@@ -210,7 +282,7 @@ export default function App(){
             <div className="tp" style={{background:"rgba(245,166,35,0.08)",border:"1px solid rgba(245,166,35,0.3)",borderRadius:16,padding:14,marginBottom:12}}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
                 <div style={{fontWeight:800,fontSize:14,color:"var(--or)"}}>RDV aujourd'hui — {S.trd.length} patient{S.trd.length>1?"s":""}</div>
-                <button onClick={()=>setBanner(false)} style={{background:"none",border:"none",color:"var(--mt)",fontSize:18,cursor:"pointer"}}>x</button>
+                <button onClick={()=>setBanner(false)} style={{display:"inline-flex",background:"none",border:"none",color:"var(--mt)",cursor:"pointer",padding:2}}><Ic n="x" s={16} sw={2.2}/></button>
               </div>
               <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
                 {S.trd.map(r=>(
@@ -309,8 +381,8 @@ export default function App(){
               S.proj>0&&"Projection mois : "+fmtMAD(S.proj)+(S.proj>goal?" - objectif depasse !":""),
               S.rel.length>0&&S.rel.length+" patient(s) en attente +2j - relance !",
             ].filter(Boolean).map((t,i)=>(
-              <div key={i} style={{display:"flex",alignItems:"flex-start",gap:10,padding:"9px 11px",background:"rgba(255,255,255,0.02)",borderRadius:10,border:"1px solid rgba(255,255,255,0.04)",marginBottom:8}}>
-                <span style={{fontSize:15,flexShrink:0}}>{i===0?"🏆":i===1?"💡":i===2?"📈":"⚡"}</span>
+              <div key={i} style={{display:"flex",alignItems:"flex-start",gap:11,padding:"10px 12px",background:"rgba(255,255,255,0.02)",borderRadius:11,border:"1px solid rgba(255,255,255,0.05)",marginBottom:8}}>
+                <span style={{flexShrink:0,marginTop:1,color:i===0?"var(--go)":i===1?"var(--or)":i===2?"var(--gn)":"var(--pu)"}}><Ic n={i===0?"award":i===1?"bulb":i===2?"trend":"zap"} s={16}/></span>
                 <span style={{fontSize:12,color:"var(--dm)",lineHeight:1.6}}>{t}</span>
               </div>
             ))}
@@ -328,7 +400,7 @@ export default function App(){
                 {S.trd.map(r=>(
                   <div key={r.id} style={{display:"flex",alignItems:"center",gap:8,padding:"7px 10px",background:"rgba(245,166,35,0.06)",borderRadius:10,flex:"1 1 130px"}}>
                     <div style={{fontWeight:700,fontSize:12,flex:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r.name} {r.time?"- "+r.time:""}</div>
-                    <a href={"tel:"+r.phone} style={{background:"rgba(201,168,76,0.1)",borderRadius:7,padding:"4px 7px",color:"var(--go)",textDecoration:"none",fontSize:11}}>📞</a>
+                    <a href={"tel:"+r.phone} style={{display:"inline-flex",background:"rgba(203,170,106,0.1)",borderRadius:8,padding:"6px",color:"var(--go)",textDecoration:"none"}}><Ic n="phone" s={13}/></a>
                   </div>
                 ))}
               </div>
@@ -340,11 +412,11 @@ export default function App(){
             <div style={{background:"rgba(201,168,76,0.06)",border:"1px solid rgba(201,168,76,0.18)",borderRadius:14,padding:13}}><div style={{fontSize:9,color:"var(--mt)",marginBottom:3}}>Conversion</div><div style={{fontSize:24,fontWeight:900,color:"var(--go)"}}>{S.cvr}%</div><div className="pb" style={{marginTop:7}}><div className="pbf" style={{width:S.cvr+"%"}}/></div></div>
             <div style={{background:"rgba(255,77,109,0.05)",border:"1px solid rgba(255,77,109,0.15)",borderRadius:14,padding:13}}><div style={{fontSize:9,color:"var(--mt)",marginBottom:3}}>Annules</div><div style={{fontSize:24,fontWeight:900,color:"var(--rd)"}}>{S.canc}</div><div style={{fontSize:10,color:"var(--dm)",marginTop:2}}>{fmtMAD(S.cca)} perdus</div></div>
           </div>
-          {S.pend>0&&<div style={{background:"rgba(245,166,35,0.05)",border:"1px solid rgba(245,166,35,0.2)",borderRadius:12,padding:"9px 13px",marginBottom:12,display:"flex",alignItems:"center",gap:10}}><span style={{fontSize:16}}>💡</span><div style={{flex:1,fontSize:12,color:"var(--dm)"}}>Potentiel si tout confirme</div><div style={{fontSize:14,fontWeight:900,color:"var(--or)"}}>{fmtMAD(Math.round(S.pca*CR))}</div></div>}
+          {S.pend>0&&<div style={{background:"rgba(226,168,69,0.05)",border:"1px solid rgba(226,168,69,0.2)",borderRadius:12,padding:"10px 13px",marginBottom:12,display:"flex",alignItems:"center",gap:10}}><span style={{color:"var(--or)"}}><Ic n="bulb" s={16}/></span><div style={{flex:1,fontSize:12,color:"var(--dm)"}}>Potentiel si tout confirme</div><div style={{fontSize:14,fontWeight:900,color:"var(--or)"}}>{fmtMAD(Math.round(S.pca*CR))}</div></div>}
           <div style={{position:"relative",marginBottom:10}}>
-            <input className="inp" placeholder="Rechercher..." value={q} onChange={e=>setQ(e.target.value)} style={{paddingLeft:38}}/>
-            <span style={{position:"absolute",left:13,top:"50%",transform:"translateY(-50%)",fontSize:15,pointerEvents:"none",color:"var(--mt)"}}>🔍</span>
-            {q&&<button onClick={()=>setQ("")} style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",color:"var(--mt)",fontSize:20,cursor:"pointer"}}>x</button>}
+            <input className="inp" placeholder="Rechercher un patient..." value={q} onChange={e=>setQ(e.target.value)} style={{paddingLeft:40}}/>
+            <span style={{position:"absolute",left:14,top:"50%",transform:"translateY(-50%)",pointerEvents:"none",color:"var(--mt)",display:"flex"}}><Ic n="search" s={16}/></span>
+            {q&&<button onClick={()=>setQ("")} style={{position:"absolute",right:11,top:"50%",transform:"translateY(-50%)",display:"inline-flex",background:"none",border:"none",color:"var(--mt)",cursor:"pointer",padding:4}}><Ic n="x" s={15} sw={2.2}/></button>}
           </div>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
             <div style={{display:"flex",gap:6,overflowX:"auto",scrollbarWidth:"none"}}>
@@ -381,7 +453,7 @@ export default function App(){
                     <div>
                       <div style={{fontWeight:800,fontSize:15}}>{rdv.name}</div>
                       <div style={{display:"flex",alignItems:"center",gap:5,marginTop:3,flexWrap:"wrap"}}>
-                        {rdv.teeth>0&&<span style={{fontSize:11,color:"var(--dm)"}}>🦷 {rdv.teeth}</span>}
+                        {rdv.teeth>0&&<span style={{fontSize:11,color:"var(--dm)",display:"inline-flex",alignItems:"center",gap:4}}><Ic n="tooth" s={12} sw={1.6}/> {rdv.teeth}</span>}
                         {rdv.treatment&&<span style={{fontSize:10,color:"var(--go)",background:"rgba(201,168,76,0.08)",padding:"1px 7px",borderRadius:10}}>{rdv.treatment}</span>}
                       </div>
                     </div>
@@ -393,26 +465,26 @@ export default function App(){
                   </div>
                 </div>
                 <div style={{display:"flex",alignItems:"center",gap:10,padding:"7px 11px",background:"var(--nv3)",borderRadius:10,marginBottom:8}}>
-                  <span style={{fontSize:12,color:"var(--dm)"}}>📅 {fmtDate(rdv.date)}</span>
-                  {rdv.time&&<span style={{fontSize:12,color:"var(--dm)"}}>🕐 {rdv.time}</span>}
+                  <span style={{fontSize:12,color:"var(--dm)",display:"inline-flex",alignItems:"center",gap:5}}><Ic n="cal" s={13} sw={1.7}/> {fmtDate(rdv.date)}</span>
+                  {rdv.time&&<span style={{fontSize:12,color:"var(--dm)",display:"inline-flex",alignItems:"center",gap:5}}><Ic n="clock" s={13} sw={1.7}/> {rdv.time}</span>}
                   <span style={{marginLeft:"auto",fontSize:10,color:du>0&&du<=3?"var(--or)":"var(--mt)"}}>{rdv.status==="cancelled"?"Annule":du>0?"dans "+du+"j":du===0?"Aujourd hui":"il y a "+Math.abs(du)+"j"}</span>
                 </div>
                 <div style={{marginBottom:rdv.notes?8:0}}>
-                  <span style={{display:"inline-flex",alignItems:"center",gap:4,padding:"3px 9px",borderRadius:20,fontSize:10,fontWeight:700,background:SC[rdv.status].color+"12",color:SC[rdv.status].color,border:"1px solid "+SC[rdv.status].color+"22"}}>
-                    {SC[rdv.status].emoji} {SC[rdv.status].label}
+                  <span style={{display:"inline-flex",alignItems:"center",gap:6,padding:"4px 10px",borderRadius:8,fontSize:10,fontWeight:800,letterSpacing:.3,background:SC[rdv.status].color+"14",color:SC[rdv.status].color,border:"1px solid "+SC[rdv.status].color+"2A"}}>
+                    <span style={{width:6,height:6,borderRadius:"50%",background:SC[rdv.status].color}}/>{SC[rdv.status].label}
                   </span>
                 </div>
-                {rdv.notes&&<div style={{fontSize:12,color:"var(--dm)",fontStyle:"italic",margin:"8px 0",padding:"6px 10px",background:"rgba(255,255,255,0.02)",borderRadius:8,borderLeft:"2px solid var(--nb)"}}>📝 {rdv.notes}</div>}
+                {rdv.notes&&<div style={{display:"flex",alignItems:"flex-start",gap:7,fontSize:12,color:"var(--dm)",fontStyle:"italic",margin:"8px 0",padding:"8px 10px",background:"rgba(255,255,255,0.02)",borderRadius:8,borderLeft:"2px solid var(--nb)"}}><span style={{color:"var(--mt)",marginTop:1,flexShrink:0}}><Ic n="note" s={13} sw={1.6}/></span>{rdv.notes}</div>}
                 <div style={{display:"flex",gap:6,alignItems:"center",justifyContent:"space-between",marginTop:9,paddingTop:9,borderTop:"1px solid var(--nb)"}}>
                   <div style={{display:"flex",gap:6}}>
-                    <a href={"tel:"+rdv.phone} style={{fontSize:12,color:"var(--go)",textDecoration:"none",background:"rgba(201,168,76,0.08)",border:"1px solid rgba(201,168,76,0.2)",borderRadius:8,padding:"5px 10px",fontWeight:600}}>📞 Tel</a>
-                    <a href={waLink(rdv.phone,rdv.name,rdv.date,rdv.time)} target="_blank" rel="noreferrer" style={{fontSize:12,color:"#25D366",textDecoration:"none",background:"rgba(37,211,102,0.08)",border:"1px solid rgba(37,211,102,0.2)",borderRadius:8,padding:"5px 10px",fontWeight:600}}>💬 WA</a>
+                    <a href={"tel:"+rdv.phone} style={{display:"inline-flex",alignItems:"center",gap:6,fontSize:12,color:"var(--go)",textDecoration:"none",background:"rgba(203,170,106,0.08)",border:"1px solid rgba(203,170,106,0.2)",borderRadius:9,padding:"6px 11px",fontWeight:600}}><Ic n="phone" s={13}/> Tel</a>
+                    <a href={waLink(rdv.phone,rdv.name,rdv.date,rdv.time)} target="_blank" rel="noreferrer" style={{display:"inline-flex",alignItems:"center",gap:6,fontSize:12,color:"#25D366",textDecoration:"none",background:"rgba(37,211,102,0.08)",border:"1px solid rgba(37,211,102,0.2)",borderRadius:9,padding:"6px 11px",fontWeight:600}}><Ic n="wa" s={13}/> WA</a>
                   </div>
                   <div style={{display:"flex",gap:5}}>
                     {cdd===rdv.id?(
-                      <><span style={{fontSize:11,color:"var(--rd)"}}>Sup?</span><button className="ab" onClick={()=>hd(rdv.id)} style={{background:"rgba(255,77,109,0.15)",color:"var(--rd)",fontWeight:700,fontSize:11}}>Oui</button><button className="ab" onClick={()=>setCdd(null)} style={{fontSize:11}}>Non</button></>
+                      <><span style={{fontSize:11,color:"var(--rd)",alignSelf:"center"}}>Supprimer ?</span><button className="ab" onClick={()=>hd(rdv.id)} style={{width:"auto",padding:"0 11px",background:"rgba(228,90,110,0.15)",color:"var(--rd)",fontWeight:700,fontSize:11,borderColor:"rgba(228,90,110,0.3)"}}>Oui</button><button className="ab" onClick={()=>setCdd(null)} style={{width:"auto",padding:"0 11px",fontSize:11}}>Non</button></>
                     ):(
-                      <><button className="ab" onClick={()=>hst(rdv.id)}>🔄</button><button className="ab" onClick={()=>he(rdv)}>✏️</button><button className="ab" onClick={()=>hdup(rdv)}>📋</button><button className="ab" onClick={()=>setCdd(rdv.id)}>🗑️</button></>
+                      <><button className="ab" title="Changer statut" onClick={()=>hst(rdv.id)}><Ic n="swap" s={15}/></button><button className="ab" title="Modifier" onClick={()=>he(rdv)}><Ic n="edit" s={15}/></button><button className="ab" title="Dupliquer" onClick={()=>hdup(rdv)}><Ic n="copy" s={15}/></button><button className="ab" title="Supprimer" onClick={()=>setCdd(rdv.id)}><Ic n="trash" s={15}/></button></>
                     )}
                   </div>
                 </div>
@@ -530,7 +602,7 @@ export default function App(){
               ROI {sc.roi>=0?"+":""}{fmtMAD(sc.roi)} x{Math.round(sc.cm/Math.max(sc.pm,1)*10)/10}
             </div>
           </div>
-          <button className="btn" onClick={()=>{setSpf(true);setEpid(null);setPf({...PF0,dateFrom:today()});}} style={{marginBottom:14}}>+ Ajouter depense pub</button>
+          <button className="btn" onClick={()=>{setSpf(true);setEpid(null);setPf({...PF0,dateFrom:today()});}} style={{marginBottom:14,display:"inline-flex",alignItems:"center",justifyContent:"center",gap:7}}><Ic n="plus" s={17} sw={2.4}/> Ajouter une dépense pub</button>
           <div className="sec">Campagnes</div>
           {pubs.sort((a,b)=>new Date(b.dateFrom)-new Date(a.dateFrom)).map(p=>(
             <div key={p.id} style={{background:"var(--nv2)",border:"1px solid var(--nb)",borderLeft:"3px solid var(--pu)",borderRadius:14,padding:13,marginBottom:10}}>
@@ -538,15 +610,15 @@ export default function App(){
                 <div style={{flex:1}}>
                   <div style={{fontWeight:700,fontSize:14}}>{p.label}</div>
                   <div style={{fontSize:11,color:"var(--dm)",marginTop:2}}>{p.platform}</div>
-                  <div style={{fontSize:11,color:"var(--dm)",marginTop:2}}>{fmtDate(p.dateFrom)} -> {fmtDate(p.dateTo)} - {pdays(p)}j {p.dailyBudget}{p.currency}/j</div>
+                  <div style={{fontSize:11,color:"var(--dm)",marginTop:2}}>{fmtDate(p.dateFrom)} → {fmtDate(p.dateTo)} · {pdays(p)}j · {p.dailyBudget}{p.currency}/j</div>
                 </div>
                 <div style={{textAlign:"right",marginLeft:12}}>
                   <div style={{fontWeight:800,fontSize:15,color:"var(--rd)"}}>-{fmtMAD(pamad(p))}</div>
                   <div style={{display:"flex",gap:5,marginTop:5,justifyContent:"flex-end"}}>
                     {cpd===p.id?(
-                      <><button className="ab" onClick={()=>hpd(p.id)} style={{background:"rgba(255,77,109,0.15)",color:"var(--rd)",fontWeight:700,fontSize:11}}>Oui</button><button className="ab" onClick={()=>setCpd(null)} style={{fontSize:11}}>Non</button></>
+                      <><button className="ab" onClick={()=>hpd(p.id)} style={{width:"auto",padding:"0 11px",background:"rgba(228,90,110,0.15)",color:"var(--rd)",fontWeight:700,fontSize:11,borderColor:"rgba(228,90,110,0.3)"}}>Oui</button><button className="ab" onClick={()=>setCpd(null)} style={{width:"auto",padding:"0 11px",fontSize:11}}>Non</button></>
                     ):(
-                      <><button className="ab" onClick={()=>hpe(p)}>✏️</button><button className="ab" onClick={()=>setCpd(p.id)}>🗑️</button></>
+                      <><button className="ab" title="Modifier" onClick={()=>hpe(p)}><Ic n="edit" s={15}/></button><button className="ab" title="Supprimer" onClick={()=>setCpd(p.id)}><Ic n="trash" s={15}/></button></>
                     )}
                   </div>
                 </div>
@@ -655,7 +727,7 @@ export default function App(){
             )}
             {S.conf>0&&Object.keys(S.bt||{}).length>0&&(
               <div style={{display:"flex",alignItems:"flex-start",gap:10,padding:"9px 11px",background:"rgba(255,255,255,0.02)",borderRadius:10,border:"1px solid rgba(255,255,255,0.04)",marginBottom:8}}>
-                <span style={{fontSize:16,flexShrink:0}}>🏆</span>
+                <span style={{flexShrink:0,marginTop:1,color:"var(--go)"}}><Ic n="award" s={16}/></span>
                 <span style={{fontSize:12,color:"var(--dm)",lineHeight:1.6}}>
                   {Object.keys(S.bt||{}).length>0&&"Meilleur traitement : "+[...Object.entries(S.bt)].sort((a,b)=>b[1].ca-a[1].ca)[0][0]+" - "+fmtMAD([...Object.entries(S.bt)].sort((a,b)=>b[1].ca-a[1].ca)[0][1].ca)}
                 </span>
@@ -663,7 +735,7 @@ export default function App(){
             )}
             {S.conf>0&&Object.keys(S.bsc||{}).length>0&&(
               <div style={{display:"flex",alignItems:"flex-start",gap:10,padding:"9px 11px",background:"rgba(255,255,255,0.02)",borderRadius:10,border:"1px solid rgba(255,255,255,0.04)",marginBottom:8}}>
-                <span style={{fontSize:16,flexShrink:0}}>📣</span>
+                <span style={{flexShrink:0,marginTop:1,color:"var(--pu)"}}><Ic n="mega" s={16}/></span>
                 <span style={{fontSize:12,color:"var(--dm)",lineHeight:1.6}}>
                   {Object.keys(S.bsc||{}).length>0&&"Source n1 : "+[...Object.entries(S.bsc)].sort((a,b)=>b[1]-a[1])[0][0]+" - "+fmtMAD(Math.round([...Object.entries(S.bsc)].sort((a,b)=>b[1]-a[1])[0][1]))+" commission"}
                 </span>
@@ -671,7 +743,7 @@ export default function App(){
             )}
             {S.roi>0&&S.cpl>0&&(
               <div style={{display:"flex",alignItems:"flex-start",gap:10,padding:"9px 11px",background:"rgba(255,255,255,0.02)",borderRadius:10,border:"1px solid rgba(255,255,255,0.04)",marginBottom:8}}>
-                <span style={{fontSize:16,flexShrink:0}}>🚀</span>
+                <span style={{flexShrink:0,marginTop:1,color:"var(--gn)"}}><Ic n="rocket" s={16}/></span>
                 <span style={{fontSize:12,color:"var(--dm)",lineHeight:1.6}}>
                   {"ROI pub x"+Math.round(S.ac/Math.max(S.cpl,1))+" - chaque "+fmtMAD(S.cpl)+" investi rapporte "+fmtMAD(Math.round(S.ac))}
                 </span>
@@ -679,7 +751,7 @@ export default function App(){
             )}
             {S.cvr<70&&S.conf>0&&(
               <div style={{display:"flex",alignItems:"flex-start",gap:10,padding:"9px 11px",background:"rgba(255,255,255,0.02)",borderRadius:10,border:"1px solid rgba(255,255,255,0.04)",marginBottom:8}}>
-                <span style={{fontSize:16,flexShrink:0}}>🎯</span>
+                <span style={{flexShrink:0,marginTop:1,color:"var(--or)"}}><Ic n="target" s={16}/></span>
                 <span style={{fontSize:12,color:"var(--dm)",lineHeight:1.6}}>
                   {"Conversion "+S.cvr+"% - "+S.pend+" patient"+(S.pend>1?"s":"")+" en attente a relancer"}
                 </span>
@@ -714,7 +786,7 @@ export default function App(){
                 <div style={{textAlign:"center",padding:"0 6px"}}>
                   {cd!==null?(
                     <div style={{background:cd>=0?"rgba(0,200,150,0.1)":"rgba(255,77,109,0.1)",border:"1px solid "+(cd>=0?"rgba(0,200,150,0.3)":"rgba(255,77,109,0.3)"),borderRadius:12,padding:"8px 10px"}}>
-                      <div style={{fontSize:20,fontWeight:900,color:cd>=0?"var(--gn)":"var(--rd)"}}>{cd>=0?"↑":"↓"}{Math.abs(cd)}%</div>
+                      <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:2,fontSize:19,fontWeight:900,color:cd>=0?"var(--gn)":"var(--rd)"}}><Ic n={cd>=0?"up":"dn"} s={15} sw={2.6}/>{Math.abs(cd)}%</div>
                       <div style={{fontSize:9,color:"var(--mt)",marginTop:2}}>vs sem. passee</div>
                     </div>
                   ):<div style={{fontSize:20}}>--</div>}
@@ -737,7 +809,7 @@ export default function App(){
                     <div style={{fontSize:19,fontWeight:900,color:k.c,marginBottom:3}}>{k.f(k.tw)}</div>
                     <div style={{fontSize:10,color:"var(--dm)",marginBottom:5}}>sem. pass. : {k.f(k.lw)}</div>
                     {d2!==null&&<div style={{display:"inline-flex",alignItems:"center",gap:4,padding:"2px 7px",borderRadius:10,background:bt?"rgba(0,200,150,0.08)":"rgba(255,77,109,0.08)",border:"1px solid "+(bt?"rgba(0,200,150,0.2)":"rgba(255,77,109,0.2)")}}>
-                      <span style={{fontSize:11,fontWeight:800,color:bt?"var(--gn)":"var(--rd)"}}>{d2>=0?"^":"v"}{Math.abs(d2)}%</span>
+                      <span style={{display:"inline-flex",alignItems:"center",gap:1,fontSize:11,fontWeight:800,color:bt?"var(--gn)":"var(--rd)"}}><Ic n={d2>=0?"up":"dn"} s={11} sw={2.6}/>{Math.abs(d2)}%</span>
                     </div>}
                   </div>
                 );
@@ -807,12 +879,12 @@ export default function App(){
         return(
           <div style={{padding:"14px"}}>
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
-              <button onClick={()=>{setCal(new Date(yr,mo-1,1));setSel(null);}} style={{width:38,height:38,borderRadius:12,background:"var(--nv2)",border:"1px solid var(--nb)",color:"var(--tx)",fontSize:20,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>&#8249;</button>
+              <button onClick={()=>{setCal(new Date(yr,mo-1,1));setSel(null);}} style={{width:40,height:40,borderRadius:12,background:"var(--nv2)",border:"1px solid var(--nb)",color:"var(--tx)",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}><Ic n="cl" s={18} sw={2.2}/></button>
               <div style={{textAlign:"center"}}>
                 <div style={{fontFamily:"'Playfair Display',serif",fontSize:17,fontWeight:700,textTransform:"capitalize"}}>{mn}</div>
                 <div style={{fontSize:11,color:"var(--gn)",fontWeight:700,marginTop:2}}>+{fmtMAD(Math.round(tmc))} ce mois</div>
               </div>
-              <button onClick={()=>{setCal(new Date(yr,mo+1,1));setSel(null);}} style={{width:38,height:38,borderRadius:12,background:"var(--nv2)",border:"1px solid var(--nb)",color:"var(--tx)",fontSize:20,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>&#8250;</button>
+              <button onClick={()=>{setCal(new Date(yr,mo+1,1));setSel(null);}} style={{width:40,height:40,borderRadius:12,background:"var(--nv2)",border:"1px solid var(--nb)",color:"var(--tx)",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}><Ic n="cr" s={18} sw={2.2}/></button>
             </div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:14}}>
               {[["Confirmes",Object.values(dm2).reduce((s,d)=>s+d.confirmed.length,0),"var(--gn)"],["En attente",Object.values(dm2).reduce((s,d)=>s+d.pending.length,0),"var(--or)"],["Commission",fmtMAD(Math.round(tmc)),"var(--go)"]].map(([l,v,c])=>(
@@ -859,8 +931,8 @@ export default function App(){
                       <div style={{fontSize:13,fontWeight:800,color:r.status==="confirmed"?"var(--gl)":"var(--mt)"}}>{fmtMAD(r.price)}</div>
                       {r.status==="confirmed"&&<div style={{fontSize:11,color:"var(--gn)",fontWeight:700}}>+{fmtMAD(r.price*CR)}</div>}
                       <div style={{display:"flex",gap:4,marginTop:5,justifyContent:"flex-end"}}>
-                        <a href={"tel:"+r.phone} style={{background:"rgba(201,168,76,0.08)",borderRadius:7,padding:"3px 7px",color:"var(--go)",fontSize:11,textDecoration:"none"}}>📞</a>
-                        <a href={waLink(r.phone,r.name,r.date,r.time)} target="_blank" rel="noreferrer" style={{background:"rgba(37,211,102,0.08)",borderRadius:7,padding:"3px 7px",color:"#25D366",fontSize:11,textDecoration:"none"}}>WA</a>
+                        <a href={"tel:"+r.phone} style={{display:"inline-flex",background:"rgba(203,170,106,0.08)",borderRadius:8,padding:"6px",color:"var(--go)",textDecoration:"none"}}><Ic n="phone" s={13}/></a>
+                        <a href={waLink(r.phone,r.name,r.date,r.time)} target="_blank" rel="noreferrer" style={{display:"inline-flex",background:"rgba(37,211,102,0.08)",borderRadius:8,padding:"6px",color:"#25D366",textDecoration:"none"}}><Ic n="wa" s={13}/></a>
                       </div>
                     </div>
                   </div>
@@ -874,7 +946,7 @@ export default function App(){
       {/* ALERTES */}
       {tab==="alertes"&&(
         <div style={{padding:"14px"}}>
-          {ac2===0&&S.rel.length===0&&<div style={{textAlign:"center",padding:"60px 20px"}}><div style={{fontSize:40,marginBottom:12}}>OK</div><div style={{fontSize:16,fontWeight:600,color:"var(--dm)"}}>Tout est en ordre !</div></div>}
+          {ac2===0&&S.rel.length===0&&<div style={{textAlign:"center",padding:"70px 20px"}}><div style={{width:64,height:64,borderRadius:18,margin:"0 auto 16px",background:"rgba(51,186,134,0.1)",border:"1px solid rgba(51,186,134,0.25)",display:"flex",alignItems:"center",justifyContent:"center",color:"var(--gn)"}}><Ic n="check" s={30} sw={2.4}/></div><div style={{fontSize:16,fontWeight:700,color:"var(--tx)"}}>Tout est en ordre</div><div style={{fontSize:13,color:"var(--mt)",marginTop:4}}>Aucune action requise pour le moment</div></div>}
           {S.trd.length>0&&(
             <div style={{marginBottom:16}}>
               <div className="sec">Aujourd'hui ({S.trd.length})</div>
@@ -883,8 +955,8 @@ export default function App(){
                   <div style={{width:34,height:34,borderRadius:10,background:"rgba(245,166,35,0.12)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,color:"var(--or)",flexShrink:0,fontSize:16}}>{r.name[0].toUpperCase()}</div>
                   <div style={{flex:1}}><div style={{fontWeight:700,fontSize:14}}>{r.name}</div><div style={{fontSize:12,color:"var(--dm)"}}>{r.time||"--"} - {fmtMAD(r.price)} - +{fmtMAD(r.price*CR)}</div></div>
                   <div style={{display:"flex",gap:6}}>
-                    <a href={"tel:"+r.phone} style={{background:"rgba(201,168,76,0.1)",borderRadius:8,padding:"6px 10px",color:"var(--go)",textDecoration:"none",fontSize:13}}>Tel</a>
-                    <a href={waLink(r.phone,r.name,r.date,r.time)} target="_blank" rel="noreferrer" style={{background:"rgba(37,211,102,0.1)",borderRadius:8,padding:"6px 10px",color:"#25D366",textDecoration:"none",fontSize:13}}>WA</a>
+                    <a href={"tel:"+r.phone} style={{display:"inline-flex",alignItems:"center",gap:5,background:"rgba(203,170,106,0.1)",borderRadius:9,padding:"7px 11px",color:"var(--go)",textDecoration:"none",fontSize:12,fontWeight:600}}><Ic n="phone" s={13}/> Tel</a>
+                    <a href={waLink(r.phone,r.name,r.date,r.time)} target="_blank" rel="noreferrer" style={{display:"inline-flex",alignItems:"center",gap:5,background:"rgba(37,211,102,0.1)",borderRadius:9,padding:"7px 11px",color:"#25D366",textDecoration:"none",fontSize:12,fontWeight:600}}><Ic n="wa" s={13}/> WA</a>
                   </div>
                 </div>
               ))}
@@ -897,7 +969,7 @@ export default function App(){
                 <div key={r.id} style={{background:"rgba(201,168,76,0.05)",border:"1px solid rgba(201,168,76,0.2)",borderRadius:14,padding:"12px 14px",marginBottom:8,display:"flex",alignItems:"center",gap:10}}>
                   <div style={{width:34,height:34,borderRadius:10,background:"rgba(201,168,76,0.1)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,color:"var(--go)",flexShrink:0,fontSize:16}}>{r.name[0].toUpperCase()}</div>
                   <div style={{flex:1}}><div style={{fontWeight:700,fontSize:14}}>{r.name}</div><div style={{fontSize:12,color:"var(--dm)"}}>{fmtDate(r.date)} - {ddiff(r.date)}j sans reponse</div></div>
-                  <a href={waLink(r.phone,r.name,r.date,r.time)} target="_blank" rel="noreferrer" style={{background:"rgba(37,211,102,0.1)",border:"1px solid rgba(37,211,102,0.25)",borderRadius:9,padding:"7px 12px",color:"#25D366",fontSize:12,textDecoration:"none",fontWeight:700}}>WA Relance</a>
+                  <a href={waLink(r.phone,r.name,r.date,r.time)} target="_blank" rel="noreferrer" style={{display:"inline-flex",alignItems:"center",gap:6,background:"rgba(37,211,102,0.1)",border:"1px solid rgba(37,211,102,0.25)",borderRadius:9,padding:"8px 13px",color:"#25D366",fontSize:12,textDecoration:"none",fontWeight:700}}><Ic n="wa" s={14}/> Relancer</a>
                 </div>
               ))}
             </div>
@@ -910,8 +982,8 @@ export default function App(){
                   <div style={{width:34,height:34,borderRadius:10,background:"rgba(255,77,109,0.1)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,color:"var(--rd)",flexShrink:0,fontSize:16}}>{r.name[0].toUpperCase()}</div>
                   <div style={{flex:1}}><div style={{fontWeight:700,fontSize:14}}>{r.name}</div><div style={{fontSize:12,color:"var(--dm)"}}>{fmtDate(r.date)} - {ddiff(r.date)}j</div></div>
                   <div style={{display:"flex",gap:6}}>
-                    <a href={waLink(r.phone,r.name,r.date,r.time)} target="_blank" rel="noreferrer" style={{background:"rgba(37,211,102,0.1)",border:"1px solid rgba(37,211,102,0.2)",borderRadius:8,padding:"6px 10px",color:"#25D366",fontSize:11,textDecoration:"none",fontWeight:700}}>WA</a>
-                    <button className="ab" onClick={()=>he(r)}>✏️</button>
+                    <a href={waLink(r.phone,r.name,r.date,r.time)} target="_blank" rel="noreferrer" style={{display:"inline-flex",alignItems:"center",gap:5,background:"rgba(37,211,102,0.1)",border:"1px solid rgba(37,211,102,0.2)",borderRadius:9,padding:"7px 11px",color:"#25D366",fontSize:11,textDecoration:"none",fontWeight:700}}><Ic n="wa" s={13}/> WA</a>
+                    <button className="ab" title="Modifier" onClick={()=>he(r)}><Ic n="edit" s={15}/></button>
                   </div>
                 </div>
               ))}
@@ -920,13 +992,13 @@ export default function App(){
         </div>
       )}
 
-      {tab==="rdv"&&!sf&&<button className="fab" onClick={()=>{setSf(true);setEid(null);setF({...IF0,date:today()});}}>+</button>}
+      {tab==="rdv"&&!sf&&<button className="fab" onClick={()=>{setSf(true);setEid(null);setF({...IF0,date:today()});}}><Ic n="plus" s={26} sw={2.4}/></button>}
 
       {/* BOTTOM NAV */}
       <div className="bn">
-        {[["home","🏠"],["rdv","📅"],["gains","💰"],["pub","📣"],["analyse","📊"],["semaine","📈"],["cal","📆"],["alertes","🔔"]].map(([t,e])=>(
-          <button key={t} className={"tb"+(tab===t?" on":"")} onClick={()=>setTab(t)} style={{padding:"13px 0",position:"relative"}}>
-            {e}{t==="alertes"&&ac2>0&&<span style={{position:"absolute",top:8,right:"calc(50% - 12px)",width:6,height:6,borderRadius:"50%",background:"var(--rd)"}}/>}
+        {[["home","home"],["rdv","cal"],["gains","money"],["pub","mega"],["analyse","bars"],["semaine","trend"],["cal","note"],["alertes","bell"]].map(([t,e])=>(
+          <button key={t} className={"tb"+(tab===t?" on":"")} onClick={()=>setTab(t)} style={{padding:"11px 0",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+            <Ic n={e} s={21} sw={tab===t?2.1:1.8}/>{t==="alertes"&&ac2>0&&<span style={{position:"absolute",top:7,right:"calc(50% - 13px)",width:7,height:7,borderRadius:"50%",background:"var(--rd)",border:"1.5px solid var(--nv)"}}/>}
           </button>
         ))}
       </div>
@@ -936,7 +1008,7 @@ export default function App(){
         <div className="sh">
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
             <div className="gg" style={{fontFamily:"'Playfair Display',serif",fontSize:20,fontWeight:700}}>Objectif mensuel</div>
-            <button onClick={()=>setSgm(false)} style={{background:"none",border:"none",color:"var(--dm)",fontSize:24,cursor:"pointer"}}>x</button>
+            <button onClick={()=>setSgm(false)} style={{width:32,height:32,borderRadius:10,background:"var(--nv3)",border:"1px solid var(--nb)",color:"var(--dm)",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}><Ic n="x" s={17} sw={2.2}/></button>
           </div>
           <div style={{fontSize:12,color:"var(--dm)",marginBottom:6}}>Objectif (DH)</div>
           <input className="inp" type="number" placeholder="5000" value={gi} onChange={e=>setGi(e.target.value)} style={{marginBottom:16}}/>
@@ -950,7 +1022,7 @@ export default function App(){
         <div className="sh">
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
             <div className="gg" style={{fontFamily:"'Playfair Display',serif",fontSize:20,fontWeight:700}}>{eid?"Modifier RDV":"Nouveau RDV"}</div>
-            <button onClick={()=>setSf(false)} style={{background:"none",border:"none",color:"var(--dm)",fontSize:24,cursor:"pointer"}}>x</button>
+            <button onClick={()=>setSf(false)} style={{width:32,height:32,borderRadius:10,background:"var(--nv3)",border:"1px solid var(--nb)",color:"var(--dm)",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}><Ic n="x" s={17} sw={2.2}/></button>
           </div>
           <div style={{display:"flex",flexDirection:"column",gap:12}}>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
@@ -970,10 +1042,10 @@ export default function App(){
             <div><div style={{fontSize:12,color:"var(--dm)",marginBottom:6}}>Telephone</div><input className="inp" placeholder="+212 6XX-XXXXXX" value={form.phone} onChange={e=>setF({...form,phone:e.target.value})}/></div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
               <div><div style={{fontSize:12,color:"var(--dm)",marginBottom:6}}>Source</div><select className="inp" value={form.source} onChange={e=>setF({...form,source:e.target.value})}>{SRCO.map(s=><option key={s}>{s}</option>)}</select></div>
-              <div><div style={{fontSize:12,color:"var(--dm)",marginBottom:6}}>Statut</div><select className="inp" value={form.status} onChange={e=>setF({...form,status:e.target.value})}>{Object.entries(SC).map(([k,v])=><option key={k} value={k}>{v.emoji} {v.label}</option>)}</select></div>
+              <div><div style={{fontSize:12,color:"var(--dm)",marginBottom:6}}>Statut</div><select className="inp" value={form.status} onChange={e=>setF({...form,status:e.target.value})}>{Object.entries(SC).map(([k,v])=><option key={k} value={k}>{v.label}</option>)}</select></div>
             </div>
             <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 13px",background:"var(--nv3)",border:"1px solid var(--nb)",borderRadius:11,cursor:"pointer"}} onClick={()=>setF({...form,returnPatient:!form.returnPatient})}>
-              <div style={{width:19,height:19,borderRadius:6,border:"2px solid "+(form.returnPatient?"var(--go)":"var(--nb)"),background:form.returnPatient?"var(--go)":"transparent",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{form.returnPatient&&<span style={{color:"var(--nv)",fontSize:12,fontWeight:900}}>v</span>}</div>
+              <div style={{width:20,height:20,borderRadius:6,border:"2px solid "+(form.returnPatient?"var(--go)":"var(--nb)"),background:form.returnPatient?"var(--go)":"transparent",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,color:"#16110A"}}>{form.returnPatient&&<Ic n="check" s={13} sw={3}/>}</div>
               <span style={{fontSize:13,color:form.returnPatient?"var(--go)":"var(--dm)"}}>Patient fidele (deja venu)</span>
             </div>
             <div><div style={{fontSize:12,color:"var(--dm)",marginBottom:6}}>Notes</div><textarea className="inp" placeholder="Zircon, enlever facettes..." value={form.notes} onChange={e=>setF({...form,notes:e.target.value})} rows={2} style={{resize:"none"}}/></div>
@@ -988,7 +1060,7 @@ export default function App(){
           <div style={{background:"var(--nv2)",borderRadius:"26px 26px 0 0",padding:"24px 20px 50px",width:"100%",maxHeight:"95vh",overflowY:"auto",borderTop:"1px solid var(--nb)"}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:22}}>
               <div className="gg" style={{fontFamily:"'Playfair Display',serif",fontSize:20,fontWeight:700}}>{epid?"Modifier":"Nouvelle depense pub"}</div>
-              <button onClick={()=>{setSpf(false);setEpid(null);setPf(PF0);}} style={{width:32,height:32,borderRadius:10,background:"var(--nv3)",border:"1px solid var(--nb)",color:"var(--dm)",fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>x</button>
+              <button onClick={()=>{setSpf(false);setEpid(null);setPf(PF0);}} style={{width:32,height:32,borderRadius:10,background:"var(--nv3)",border:"1px solid var(--nb)",color:"var(--dm)",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}><Ic n="x" s={17} sw={2.2}/></button>
             </div>
             <div style={{display:"flex",flexDirection:"column",gap:14}}>
               <div>
@@ -1048,7 +1120,7 @@ export default function App(){
         <div className="sh">
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
             <div className="gg" style={{fontFamily:"'Playfair Display',serif",fontSize:20,fontWeight:700}}>Sauvegarde</div>
-            <button onClick={()=>setBk(false)} style={{background:"none",border:"none",color:"var(--dm)",fontSize:24,cursor:"pointer"}}>x</button>
+            <button onClick={()=>setBk(false)} style={{width:32,height:32,borderRadius:10,background:"var(--nv3)",border:"1px solid var(--nb)",color:"var(--dm)",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}><Ic n="x" s={17} sw={2.2}/></button>
           </div>
           <div style={{background:"var(--nv3)",border:"1px solid var(--nb)",borderRadius:13,padding:15,marginBottom:14}}>
             <div style={{fontSize:13,fontWeight:600,marginBottom:4}}>Exporter mes donnees</div>
