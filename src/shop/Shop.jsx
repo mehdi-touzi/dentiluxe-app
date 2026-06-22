@@ -7,10 +7,10 @@ import { useState, useMemo } from "react";
 const WA_NUMBER = "212772207947";
 
 const PRODUCT = {
-  name: "Kit Blanchiment Denti Luxe",
-  tagline: "Un sourire éclatant en 7 jours, à la maison",
+  name: "Hydropulseur Denti Luxe",
+  tagline: "Un sourire propre et sain, comme chez le dentiste",
   price: 299,        // prix de vente (DH)
-  oldPrice: 499,     // ancien prix barré (DH) — mets 0 pour le masquer
+  oldPrice: 449,     // ancien prix barré (DH) — mets 0 pour le masquer
   currency: "DH",
   // Photos : dépose tes images dans le dossier /public puis mets les chemins ici
   // (ex: "/kit1.jpg"). Laisse vide pour afficher le visuel logo.
@@ -24,14 +24,15 @@ const STATS = [
 ];
 
 const REVIEWS = [
-  { name: "Salma", city: "Rabat", txt: "Résultat visible en 5 jours, mes dents sont vraiment plus blanches. Je recommande à 100% !" },
-  { name: "Yassine", city: "Témara", txt: "Facile à utiliser et livraison rapide. J'ai payé une fois reçu. Top." },
-  { name: "Imane", city: "Casablanca", txt: "J'avais peur que ça abîme mes dents mais non, aucune sensibilité. Sourire de star ✨" },
+  { name: "Salma", city: "Rabat", txt: "Depuis que j'ai mes facettes, l'hydropulseur est devenu indispensable. Mes gencives sont nickel !" },
+  { name: "Yassine", city: "Témara", txt: "Sans fil, batterie qui tient, super pratique. Livraison rapide et payé à la réception. Top." },
+  { name: "Imane", city: "Casablanca", txt: "Sensation de propreté incroyable, comme après un détartrage. J'adore ✨" },
 ];
 
 const FAQ = [
-  { q: "Est-ce que ça abîme l'émail ?", a: "Non. La formule est douce et respecte l'émail. Utilisé selon la notice, il n'y a pas de risque pour tes dents." },
-  { q: "En combien de temps je vois les résultats ?", a: "La plupart de nos clients voient une différence dès 5 à 7 jours, à raison d'une utilisation par jour." },
+  { q: "C'est compatible avec mes facettes / bridges ?", a: "Oui, c'est même recommandé : le jet d'eau nettoie en douceur autour des facettes, bridges et implants sans les abîmer." },
+  { q: "Ça remplace le fil dentaire ?", a: "Oui, et c'est plus efficace et plus doux pour les gencives. Le jet déloge les résidus là où la brosse n'atteint pas." },
+  { q: "La batterie tient combien de temps ?", a: "Plusieurs jours d'utilisation par charge. Il est sans fil, étanche (IPX7) et se recharge en USB." },
   { q: "Comment je paie ?", a: "Tu paies à la livraison (cash), une fois le colis reçu chez toi. Aucune avance." },
   { q: "Vous livrez où ?", a: "Partout au Maroc, en 24 à 72h selon ta ville." },
 ];
@@ -113,15 +114,15 @@ export default function Shop() {
   }
 
   const benefits = [
-    { n: "smile", t: "Dents plus blanches", d: "Plusieurs teintes en moins de 7 jours" },
-    { n: "shield", t: "Sans sensibilité", d: "Formule douce, respecte l'émail" },
-    { n: "spark", t: "Résultat pro à la maison", d: "Gel + lampe LED, simple à utiliser" },
-    { n: "star", t: "Signé Denti Luxe", d: "La marque référence du sourire" },
+    { n: "spark", t: "Nettoyage en profondeur", d: "Atteint là où la brosse ne va pas" },
+    { n: "shield", t: "Protège tes facettes", d: "Idéal facettes, bridges & gencives" },
+    { n: "smile", t: "Gencives plus saines", d: "Réduit la plaque et la mauvaise haleine" },
+    { n: "star", t: "Sans fil & étanche", d: "3 modes · rechargeable · IPX7" },
   ];
   const steps = [
-    "Applique le gel sur la gouttière",
-    "Pose la lampe LED 10–15 min",
-    "Rince — souris, c'est tout !",
+    "Remplis le réservoir d'eau",
+    "Choisis ton mode de jet",
+    "Passe entre les dents — propre en 1 min !",
   ];
   const guarantees = [
     { n: "cash", t: "Paiement à la livraison" },
