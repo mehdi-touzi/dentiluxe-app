@@ -12,9 +12,8 @@ const PRODUCT = {
   price: 299,        // prix de vente (DH)
   oldPrice: 449,     // ancien prix barré (DH) — mets 0 pour le masquer
   currency: "DH",
-  // Photos : dépose tes images dans le dossier /public puis mets les chemins ici
-  // (ex: "/kit1.jpg"). Laisse vide pour afficher le visuel logo.
-  photos: [],
+  // Photos : dépose tes images dans le dossier /public puis mets les chemins ici.
+  photos: ["/product1.png", "/product2.png", "/product3.png"],
 };
 
 const STATS = [
@@ -88,6 +87,7 @@ function Stars({ s = 14 }) {
 
 export default function Shop() {
   const [qty, setQty] = useState(1);
+  const [pic, setPic] = useState(0);
   const [f, setF] = useState({ name: "", phone: "", city: "" });
   const [err, setErr] = useState("");
   const [open, setOpen] = useState(null);
@@ -163,9 +163,9 @@ export default function Shop() {
 
       <div style={{ padding: "20px 16px 0" }}>
         {/* Visuel produit */}
-        <div style={{ position: "relative", borderRadius: 20, overflow: "hidden", border: "1px solid var(--nb)", marginBottom: 16, background: "radial-gradient(circle at 50% 35%,#1A2231,#0C111A)", aspectRatio: "4/3", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ position: "relative", borderRadius: 20, overflow: "hidden", border: "1px solid var(--nb)", marginBottom: PRODUCT.photos.length > 1 ? 10 : 16, background: "radial-gradient(circle at 50% 35%,#1A2231,#0C111A)", aspectRatio: "4/3", display: "flex", alignItems: "center", justifyContent: "center" }}>
           {PRODUCT.photos.length > 0 ? (
-            <img src={PRODUCT.photos[0]} alt={PRODUCT.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <img src={PRODUCT.photos[pic]} alt={PRODUCT.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           ) : (
             <div style={{ textAlign: "center", padding: 24 }}>
               <img src="/logo.png" alt="" width={120} height={120} style={{ width: 120, height: 120, objectFit: "contain", opacity: .95 }} />
@@ -174,6 +174,15 @@ export default function Shop() {
           )}
           {discount > 0 && <div style={{ position: "absolute", top: 12, left: 12, background: "var(--rd)", color: "#fff", fontWeight: 800, fontSize: 13, padding: "5px 11px", borderRadius: 9, boxShadow: "0 4px 12px rgba(228,90,110,0.4)" }}>-{discount}%</div>}
         </div>
+        {PRODUCT.photos.length > 1 && (
+          <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+            {PRODUCT.photos.map((p, i) => (
+              <button key={p} onClick={() => setPic(i)} style={{ width: 56, height: 56, borderRadius: 11, overflow: "hidden", padding: 0, cursor: "pointer", background: "#0C111A", border: "2px solid " + (pic === i ? "var(--go)" : "var(--nb)") }}>
+                <img src={p} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: pic === i ? 1 : 0.6 }} />
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Prix + CTA */}
         <div className="card" style={{ marginBottom: 16, border: "1px solid rgba(203,170,106,0.3)" }}>
