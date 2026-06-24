@@ -64,7 +64,7 @@
           "settings": {
             "label": "Commander — 299 DH au lieu de 449",
             "link": "shopify://products/hydropulseur-denti-luxe-jet-dentaire-sans-fil",
-            "style_class": "button-primary"
+            "style_class": "button"
           }
         }
       },
@@ -270,7 +270,7 @@
           "settings": {
             "label": "Je commande maintenant",
             "link": "shopify://products/hydropulseur-denti-luxe-jet-dentaire-sans-fil",
-            "style_class": "button-primary"
+            "style_class": "button"
           }
         }
       },

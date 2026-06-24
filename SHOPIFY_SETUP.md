@@ -22,10 +22,13 @@ Devise : MAD · Pays : Maroc · Plan : Basic · Thème de base : Horizon
 Description vendeuse (bénéfices, mode d'emploi, garanties, FAQ) reprise de la page
 de vente `src/shop/Shop.jsx`, orientée paiement à la livraison + facettes/gencives.
 
-### Paiement à la livraison (COD) — action manuelle requise
-Le COD est une **méthode de paiement au niveau de la boutique**, pas un attribut produit.
-À activer dans **Shopify Admin → Paramètres → Paiements → Paiement à la livraison (Cash on Delivery)**.
-Le produit est déjà tagué et sa description annonce le paiement à la livraison.
+### Paiement à la livraison (COD)
+✅ Activé (moyen de paiement manuel « Paiement à la livraison (COD) »).
+
+### Publication du produit sur le canal « Boutique en ligne »
+✅ Publié sur les canaux **Boutique en ligne** et **Point de vente**
+(`publishablePublish`). Sans ça, la boutique affichait « No products found » et
+des cartes produit fictives.
 
 ## 2. Thème navy / or
 
@@ -63,3 +66,18 @@ Structure (3 sections, toutes navy/or) :
 C'est ce thème (et non la version sans page d'accueil) qu'il faut publier pour avoir
 à la fois le palette navy/or **et** la landing produit. Les anciens thèmes peuvent ensuite
 être supprimés.
+
+## 4. Corrections après recette (vidéo de prévisualisation)
+
+- **Produit invisible** → publié sur les canaux Boutique en ligne + Point de vente.
+- **CTA non cliquables visuellement** : `style_class` valait `"button-primary"`
+  (invalide pour Horizon) → rendu en simple texte. Valeurs valides : `button`
+  (primaire), `button-secondary`, `button-unstyled`, `button-custom`.
+  Corrigé en `"button"` (bouton or plein, texte navy).
+- Correctif appliqué sur le thème **« Denti Luxe — Navy & Or v2 »**
+  (`gid://shopify/OnlineStoreTheme/162660024539`, UNPUBLISHED) → **à publier**.
+
+### Astuce : éviter de republier
+Le correctif bouton peut aussi se faire en 30 s dans l'éditeur du thème **déjà en
+ligne** : Personnaliser → cliquer chaque bouton CTA (hero + bandeau de clôture)
+→ Style → **Primaire**. Pas besoin de republier dans ce cas.
