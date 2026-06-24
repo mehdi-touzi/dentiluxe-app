@@ -1,0 +1,238 @@
+{%- assign p = all_products['hydropulseur-denti-luxe-jet-dentaire-sans-fil'] -%}
+{%- assign v = p.selected_or_first_available_variant -%}
+{%- assign disc = 0 -%}
+{%- if p.compare_at_price > p.price -%}
+  {%- assign disc = p.compare_at_price | minus: p.price | times: 100 | divided_by: p.compare_at_price -%}
+{%- endif -%}
+
+<section class="dl" id="dl-{{ section.id }}">
+  <div class="dl-announce">
+    <span class="dl-dot"></span> Offre de lancement{% if disc > 0 %} · −{{ disc }}%{% endif %} · Paiement à la livraison partout au Maroc
+  </div>
+
+  <!-- HERO -->
+  <div class="dl-hero">
+    <div class="dl-hero__media">
+      {%- if p.featured_image -%}
+        <img src="{{ p.featured_image | image_url: width: 1200 }}" alt="{{ p.title | escape }}" width="600" height="450" loading="eager">
+      {%- endif -%}
+      {% if disc > 0 %}<span class="dl-badge">−{{ disc }}%</span>{% endif %}
+    </div>
+    <div class="dl-hero__body">
+      <div class="dl-eyebrow">Hydropulseur sans fil · Denti Luxe</div>
+      <h1 class="dl-h1">Un sourire propre et sain,<br><span class="dl-gold">comme chez le dentiste</span></h1>
+      <div class="dl-stars-row">
+        <span class="dl-stars">★★★★★</span>
+        <span class="dl-muted">noté 4.9/5 par +1 200 clients</span>
+      </div>
+      <p class="dl-lead">Le jet d’eau pulsé qui nettoie en profondeur là où la brosse et le fil n’atteignent pas. Idéal pour <b>facettes, bridges &amp; gencives sensibles</b>.</p>
+      <div class="dl-price">
+        <span class="dl-price__now">{{ p.price | money }}</span>
+        {% if p.compare_at_price > p.price %}<span class="dl-price__old">{{ p.compare_at_price | money }}</span>{% endif %}
+      </div>
+      <div class="dl-trust"><span class="dl-check">✓</span> En stock · Livraison 24–72h · Vous payez à la réception</div>
+      {% form 'product', p, class: 'dl-form' %}
+        <input type="hidden" name="id" value="{{ v.id }}">
+        <input type="hidden" name="return_to" value="/checkout">
+        <button type="submit" class="dl-btn" {% unless v.available %}disabled{% endunless %}>
+          {% if v.available %}Commander maintenant — {{ p.price | money }}{% else %}Rupture de stock{% endif %}
+        </button>
+      {% endform %}
+      <a href="{{ p.url }}" class="dl-link">Voir tous les détails du produit →</a>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="dl-wrap">
+    <div class="dl-stats">
+      <div class="dl-stat"><div class="dl-stat__v">3 370+</div><div class="dl-stat__l">abonnés</div></div>
+      <div class="dl-stat"><div class="dl-stat__v">4.9/5</div><div class="dl-stat__l">satisfaction</div></div>
+      <div class="dl-stat"><div class="dl-stat__v">+1 200</div><div class="dl-stat__l">sourires</div></div>
+    </div>
+
+    <!-- BENEFITS -->
+    <h2 class="dl-h2">Pourquoi vous allez l’adopter</h2>
+    <div class="dl-grid">
+      <div class="dl-card">
+        <svg class="dl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.6 6.4L20 10l-6.4 1.6L12 18l-1.6-6.4L4 10l6.4-1.6z"/></svg>
+        <h3>Nettoyage en profondeur</h3><p>Atteint les zones inaccessibles à la brosse.</p>
+      </div>
+      <div class="dl-card">
+        <svg class="dl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <h3>Protège vos facettes</h3><p>Nettoie en douceur facettes, bridges &amp; implants.</p>
+      </div>
+      <div class="dl-card">
+        <svg class="dl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20M8 14s1.5 2 4 2 4-2 4-2M9 9v.01M15 9v.01"/></svg>
+        <h3>Gencives plus saines</h3><p>Réduit la plaque et la mauvaise haleine.</p>
+      </div>
+      <div class="dl-card">
+        <svg class="dl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg>
+        <h3>Sans fil &amp; étanche</h3><p>3 modes de jet · rechargeable USB · IPX7.</p>
+      </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <h2 class="dl-h2">Comment ça marche</h2>
+    <div class="dl-steps">
+      <div class="dl-step"><span class="dl-step__n">1</span><span>Remplissez le réservoir d’eau</span></div>
+      <div class="dl-step"><span class="dl-step__n">2</span><span>Choisissez votre mode de jet</span></div>
+      <div class="dl-step"><span class="dl-step__n">3</span><span>Passez entre les dents — propre en 1 minute&nbsp;!</span></div>
+    </div>
+
+    <!-- REVIEWS -->
+    <div class="dl-rev-head">
+      <h2 class="dl-h2 dl-h2--flush">Avis clients</h2>
+      <span class="dl-stars">★★★★★ <span class="dl-muted">4.9/5</span></span>
+    </div>
+    <div class="dl-reviews">
+      <figure class="dl-review">
+        <div class="dl-review__top"><span class="dl-av">S</span><div><b>Salma</b> · Rabat<br><span class="dl-verif">✓ Achat vérifié</span></div></div>
+        <blockquote>« Depuis que j’ai mes facettes, l’hydropulseur est devenu indispensable. Mes gencives sont nickel ! »</blockquote>
+      </figure>
+      <figure class="dl-review">
+        <div class="dl-review__top"><span class="dl-av">Y</span><div><b>Yassine</b> · Témara<br><span class="dl-verif">✓ Achat vérifié</span></div></div>
+        <blockquote>« Sans fil, batterie qui tient, super pratique. Livraison rapide et payé à la réception. Top. »</blockquote>
+      </figure>
+      <figure class="dl-review">
+        <div class="dl-review__top"><span class="dl-av">I</span><div><b>Imane</b> · Casablanca<br><span class="dl-verif">✓ Achat vérifié</span></div></div>
+        <blockquote>« Sensation de propreté incroyable, comme après un détartrage. J’adore ✨ »</blockquote>
+      </figure>
+    </div>
+
+    <!-- GUARANTEES -->
+    <div class="dl-guars">
+      <div class="dl-guar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h20v12H2zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6"/></svg><span>Paiement à la livraison</span></div>
+      <div class="dl-guar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h11v9H3zM14 9h4l3 3v3h-7zM7 18a2 2 0 1 0 .01 0M17 18a2 2 0 1 0 .01 0"/></svg><span>Livraison partout au Maroc</span></div>
+      <div class="dl-guar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg><span>Satisfait ou remboursé</span></div>
+    </div>
+
+    <!-- FAQ -->
+    <h2 class="dl-h2">Questions fréquentes</h2>
+    <div class="dl-faq">
+      <details><summary>C’est compatible avec mes facettes / bridges ?<span class="dl-chev">⌄</span></summary><p>Oui, c’est même recommandé : le jet d’eau nettoie en douceur autour des facettes, bridges et implants sans les abîmer.</p></details>
+      <details><summary>Ça remplace le fil dentaire ?<span class="dl-chev">⌄</span></summary><p>Oui, et c’est plus efficace et plus doux pour les gencives. Le jet déloge les résidus là où la brosse n’atteint pas.</p></details>
+      <details><summary>La batterie tient combien de temps ?<span class="dl-chev">⌄</span></summary><p>Plusieurs jours d’utilisation par charge. Il est sans fil, étanche (IPX7) et se recharge en USB.</p></details>
+      <details><summary>Comment je paie ?<span class="dl-chev">⌄</span></summary><p>Vous payez à la livraison (cash), une fois le colis reçu chez vous. Aucune avance.</p></details>
+      <details><summary>Vous livrez où ?<span class="dl-chev">⌄</span></summary><p>Partout au Maroc, en 24 à 72h selon votre ville.</p></details>
+    </div>
+
+    <!-- FINAL CTA -->
+    <div class="dl-final">
+      <h2 class="dl-final__h">Prêt à retrouver un sourire éclatant ?</h2>
+      <p class="dl-final__p">Commandez en 30 secondes · Paiement à la livraison · Satisfait ou remboursé.</p>
+      <div class="dl-final__price">
+        <span class="dl-price__now">{{ p.price | money }}</span>
+        {% if p.compare_at_price > p.price %}<span class="dl-price__old">{{ p.compare_at_price | money }}</span>{% endif %}
+      </div>
+      {% form 'product', p, class: 'dl-form' %}
+        <input type="hidden" name="id" value="{{ v.id }}">
+        <input type="hidden" name="return_to" value="/checkout">
+        <button type="submit" class="dl-btn" {% unless v.available %}disabled{% endunless %}>
+          {% if v.available %}Je commande maintenant{% else %}Rupture de stock{% endif %}
+        </button>
+      {% endform %}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+{% endstylesheet %}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap');
+  #dl-{{ section.id }}{
+    --nv:#0B1320;--nv2:#10182A;--nv3:#16203A;--nb:#26314B;--go:#CBAA6A;--gl:#E6D09A;
+    --tx:#EEF1F6;--dm:#A7AFBF;--mt:#717B90;--gn:#33BA86;--rd:#E45A6E;
+    font-family:'DM Sans',system-ui,sans-serif;color:var(--tx);background:var(--nv);
+    display:block;overflow:hidden;
+  }
+  #dl-{{ section.id }} *{box-sizing:border-box;}
+  #dl-{{ section.id }} .dl-wrap{max-width:1080px;margin:0 auto;padding:0 20px;}
+  #dl-{{ section.id }} .dl-gold{color:var(--go);}
+  #dl-{{ section.id }} .dl-muted{color:var(--dm);font-size:.82rem;font-weight:500;}
+  #dl-{{ section.id }} .dl-stars{color:var(--go);letter-spacing:2px;}
+
+  #dl-{{ section.id }} .dl-announce{background:linear-gradient(90deg,rgba(203,170,106,.18),rgba(203,170,106,.05));border-bottom:1px solid var(--nb);text-align:center;padding:10px 16px;font-size:.78rem;font-weight:600;color:var(--gl);letter-spacing:.2px;display:flex;gap:8px;align-items:center;justify-content:center;}
+  #dl-{{ section.id }} .dl-dot{width:7px;height:7px;border-radius:50%;background:var(--gn);box-shadow:0 0 0 4px rgba(51,186,134,.18);}
+
+  #dl-{{ section.id }} .dl-hero{max-width:1080px;margin:0 auto;padding:40px 20px 8px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;}
+  #dl-{{ section.id }} .dl-hero__media{position:relative;border-radius:24px;overflow:hidden;border:1px solid var(--nb);background:radial-gradient(circle at 50% 30%,#1B263F,#0A1120);aspect-ratio:4/3;box-shadow:0 30px 70px rgba(0,0,0,.5);}
+  #dl-{{ section.id }} .dl-hero__media img{width:100%;height:100%;object-fit:cover;display:block;}
+  #dl-{{ section.id }} .dl-badge{position:absolute;top:14px;left:14px;background:var(--rd);color:#fff;font-weight:800;font-size:.85rem;padding:6px 12px;border-radius:10px;box-shadow:0 6px 16px rgba(228,90,110,.45);}
+  #dl-{{ section.id }} .dl-eyebrow{font-size:.78rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--go);margin-bottom:12px;}
+  #dl-{{ section.id }} .dl-h1{font-family:'Playfair Display',serif;font-weight:800;font-size:2.6rem;line-height:1.1;margin:0 0 14px;letter-spacing:-.5px;}
+  #dl-{{ section.id }} .dl-stars-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+  #dl-{{ section.id }} .dl-lead{color:var(--dm);font-size:1.02rem;line-height:1.65;margin:0 0 18px;max-width:520px;}
+  #dl-{{ section.id }} .dl-price{display:flex;align-items:baseline;gap:12px;margin-bottom:10px;}
+  #dl-{{ section.id }} .dl-price__now{font-family:'Playfair Display',serif;font-size:2.3rem;font-weight:800;background:linear-gradient(95deg,var(--go),var(--gl));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  #dl-{{ section.id }} .dl-price__old{font-size:1.1rem;color:var(--mt);text-decoration:line-through;}
+  #dl-{{ section.id }} .dl-trust{display:flex;align-items:center;gap:8px;font-size:.86rem;color:var(--gn);font-weight:600;margin-bottom:20px;}
+  #dl-{{ section.id }} .dl-check{display:inline-flex;width:18px;height:18px;align-items:center;justify-content:center;border-radius:50%;background:rgba(51,186,134,.16);font-size:.7rem;}
+  #dl-{{ section.id }} .dl-form{margin:0 0 12px;}
+  #dl-{{ section.id }} .dl-btn{display:flex;width:100%;max-width:420px;align-items:center;justify-content:center;gap:9px;background:linear-gradient(180deg,var(--gl),var(--go));color:#16110A;border:none;border-radius:16px;padding:18px 22px;font-weight:800;font-size:1.05rem;letter-spacing:.2px;cursor:pointer;box-shadow:0 12px 30px rgba(203,170,106,.32);transition:transform .12s,box-shadow .2s;font-family:inherit;}
+  #dl-{{ section.id }} .dl-btn:hover{transform:translateY(-2px);box-shadow:0 16px 38px rgba(203,170,106,.42);}
+  #dl-{{ section.id }} .dl-btn:active{transform:translateY(0);}
+  #dl-{{ section.id }} .dl-btn[disabled]{opacity:.5;cursor:not-allowed;box-shadow:none;}
+  #dl-{{ section.id }} .dl-link{display:inline-block;color:var(--dm);font-size:.85rem;text-decoration:none;border-bottom:1px solid var(--nb);padding-bottom:2px;}
+  #dl-{{ section.id }} .dl-link:hover{color:var(--gl);}
+
+  #dl-{{ section.id }} .dl-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:44px 0 8px;}
+  #dl-{{ section.id }} .dl-stat{background:var(--nv2);border:1px solid var(--nb);border-radius:16px;text-align:center;padding:18px 8px;}
+  #dl-{{ section.id }} .dl-stat__v{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:800;background:linear-gradient(95deg,var(--go),var(--gl));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  #dl-{{ section.id }} .dl-stat__l{font-size:.72rem;color:var(--mt);text-transform:uppercase;letter-spacing:1px;margin-top:4px;}
+
+  #dl-{{ section.id }} .dl-h2{font-family:'Playfair Display',serif;font-size:1.85rem;font-weight:700;text-align:center;margin:54px 0 24px;}
+  #dl-{{ section.id }} .dl-h2--flush{margin:0;text-align:left;}
+  #dl-{{ section.id }} .dl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  #dl-{{ section.id }} .dl-card{background:var(--nv2);border:1px solid var(--nb);border-radius:18px;padding:22px;transition:transform .18s,border-color .18s;}
+  #dl-{{ section.id }} .dl-card:hover{transform:translateY(-4px);border-color:rgba(203,170,106,.5);}
+  #dl-{{ section.id }} .dl-ico{width:30px;height:30px;color:var(--go);margin-bottom:12px;}
+  #dl-{{ section.id }} .dl-card h3{font-size:1rem;font-weight:700;margin:0 0 6px;}
+  #dl-{{ section.id }} .dl-card p{font-size:.85rem;color:var(--dm);line-height:1.55;margin:0;}
+
+  #dl-{{ section.id }} .dl-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  #dl-{{ section.id }} .dl-step{display:flex;align-items:center;gap:14px;background:var(--nv2);border:1px solid var(--nb);border-radius:16px;padding:18px;font-size:.95rem;}
+  #dl-{{ section.id }} .dl-step__n{flex-shrink:0;width:38px;height:38px;border-radius:12px;background:rgba(203,170,106,.14);color:var(--go);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:'Playfair Display',serif;font-size:1.1rem;}
+
+  #dl-{{ section.id }} .dl-rev-head{display:flex;align-items:center;justify-content:space-between;margin:54px 0 22px;}
+  #dl-{{ section.id }} .dl-reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  #dl-{{ section.id }} .dl-review{background:var(--nv2);border:1px solid var(--nb);border-radius:18px;padding:20px;margin:0;}
+  #dl-{{ section.id }} .dl-review__top{display:flex;align-items:center;gap:12px;margin-bottom:12px;font-size:.85rem;}
+  #dl-{{ section.id }} .dl-av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--go),var(--gl));color:#16110A;display:flex;align-items:center;justify-content:center;font-weight:800;}
+  #dl-{{ section.id }} .dl-verif{color:var(--gn);font-size:.74rem;font-weight:600;}
+  #dl-{{ section.id }} .dl-review blockquote{margin:0;font-size:.92rem;color:var(--dm);line-height:1.65;font-style:italic;}
+
+  #dl-{{ section.id }} .dl-guars{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:30px 0 0;}
+  #dl-{{ section.id }} .dl-guar{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;background:var(--nv2);border:1px solid var(--nb);border-radius:16px;padding:22px 14px;font-size:.85rem;color:var(--dm);font-weight:600;}
+  #dl-{{ section.id }} .dl-guar svg{width:28px;height:28px;color:var(--go);}
+
+  #dl-{{ section.id }} .dl-faq{max-width:760px;margin:0 auto;}
+  #dl-{{ section.id }} .dl-faq details{background:var(--nv2);border:1px solid var(--nb);border-radius:14px;margin-bottom:10px;overflow:hidden;}
+  #dl-{{ section.id }} .dl-faq summary{list-style:none;cursor:pointer;padding:16px 18px;font-weight:700;font-size:.95rem;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  #dl-{{ section.id }} .dl-faq summary::-webkit-details-marker{display:none;}
+  #dl-{{ section.id }} .dl-chev{color:var(--go);transition:transform .2s;font-size:1.2rem;}
+  #dl-{{ section.id }} .dl-faq details[open] .dl-chev{transform:rotate(180deg);}
+  #dl-{{ section.id }} .dl-faq p{padding:0 18px 16px;margin:0;color:var(--dm);font-size:.9rem;line-height:1.65;}
+
+  #dl-{{ section.id }} .dl-final{text-align:center;margin:60px 0 70px;background:radial-gradient(circle at 50% 0%,#16203A,#0B1320);border:1px solid var(--nb);border-radius:24px;padding:44px 24px;}
+  #dl-{{ section.id }} .dl-final__h{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;margin:0 0 8px;}
+  #dl-{{ section.id }} .dl-final__p{color:var(--dm);margin:0 0 16px;font-size:.95rem;}
+  #dl-{{ section.id }} .dl-final__price{display:flex;justify-content:center;align-items:baseline;gap:12px;margin-bottom:18px;}
+  #dl-{{ section.id }} .dl-final .dl-btn{margin:0 auto;}
+
+  @media (max-width:820px){
+    #dl-{{ section.id }} .dl-hero{grid-template-columns:1fr;gap:24px;padding-top:28px;}
+    #dl-{{ section.id }} .dl-h1{font-size:2.05rem;}
+    #dl-{{ section.id }} .dl-grid{grid-template-columns:1fr 1fr;}
+    #dl-{{ section.id }} .dl-steps,#dl-{{ section.id }} .dl-reviews,#dl-{{ section.id }} .dl-guars{grid-template-columns:1fr;}
+    #dl-{{ section.id }} .dl-btn{max-width:none;}
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Denti Luxe Landing",
+  "settings": [],
+  "presets": [{ "name": "Denti Luxe Landing" }]
+}
+{% endschema %}

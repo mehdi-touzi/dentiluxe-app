@@ -81,3 +81,18 @@ C'est ce thème (et non la version sans page d'accueil) qu'il faut publier pour 
 Le correctif bouton peut aussi se faire en 30 s dans l'éditeur du thème **déjà en
 ligne** : Personnaliser → cliquer chaque bouton CTA (hero + bandeau de clôture)
 → Style → **Primaire**. Pas besoin de republier dans ce cas.
+
+## 5. Refonte premium — page d'accueil sur-mesure
+
+Section custom **`sections/denti-landing.liquid`** (HTML/CSS maison, scoped `.dl`,
+navy/or) qui remplace les blocs Horizon génériques. Contenu :
+- Bandeau d'annonce · Hero produit (image + prix dynamique {{ product }} + bouton
+  **Commander** qui ajoute au panier et va droit au **checkout COD**)
+- Bandeau de stats (3 370+ / 4.9/5 / +1 200)
+- Grille de bénéfices (4 cartes + icônes SVG), « Comment ça marche » (3 étapes)
+- Avis clients (3), garanties, FAQ accordéon natif, CTA final
+- Responsive (desktop 2 colonnes → mobile 1 colonne), data produit en Liquid.
+
+`templates/index.json` ne charge plus que cette section.
+Construit sur le thème **« Denti Luxe — Premium »**
+(`gid://shopify/OnlineStoreTheme/162660384987`, UNPUBLISHED) → **à publier**.
