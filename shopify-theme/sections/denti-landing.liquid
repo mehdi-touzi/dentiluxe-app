@@ -15,7 +15,7 @@
     <div class="dl-hero__stage">
       <div class="dl-hero__media" data-dl-tilt>
         {%- if p.featured_image -%}
-          <img src="{{ p.featured_image | image_url: width: 1200 }}" alt="{{ p.title | escape }}" width="600" height="450" loading="eager" class="dl-hero__img">
+          <img src="{{ p.featured_image | image_url: width: 1200 }}" alt="{{ p.title | escape }}" width="600" height="450" loading="eager" class="dl-hero__img" id="dl-main-{{ section.id }}">
         {%- endif -%}
         {% if disc > 0 %}
           <div class="dl-coin" aria-hidden="true">
@@ -23,6 +23,15 @@
           </div>
         {% endif %}
       </div>
+      {% if p.images.size > 1 %}
+        <div class="dl-thumbs">
+          {% for image in p.images %}
+            <button type="button" class="dl-thumb{% if forloop.first %} is-active{% endif %}" data-full="{{ image | image_url: width: 1200 }}" aria-label="Photo {{ forloop.index }}">
+              <img src="{{ image | image_url: width: 200 }}" alt="" loading="lazy" width="64" height="64">
+            </button>
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
     <div class="dl-hero__body">
       {% if settings.logo %}<img class="dl-logo" src="{{ settings.logo | image_url: width: 240 }}" alt="{{ shop.name | escape }}" width="120" height="120">{% endif %}
@@ -140,6 +149,21 @@
       {% endform %}
     </div>
   </div>
+
+  <!-- STICKY MOBILE CTA -->
+  <div class="dl-sticky">
+    <div class="dl-sticky__left">
+      <span class="dl-sticky__price">{{ p.price | money }}</span>
+      {% if p.compare_at_price > p.price %}<span class="dl-sticky__old">{{ p.compare_at_price | money }}</span>{% endif %}
+    </div>
+    {% form 'product', p, class: 'dl-sticky__form' %}
+      <input type="hidden" name="id" value="{{ v.id }}">
+      <input type="hidden" name="return_to" value="/checkout">
+      <button type="submit" class="dl-btn dl-btn--sm" {% unless v.available %}disabled{% endunless %}>
+        {% if v.available %}Commander{% else %}Rupture{% endif %}
+      </button>
+    {% endform %}
+  </div>
 </section>
 
 <style>
@@ -165,6 +189,11 @@
   #dl-{{ section.id }} .dl-hero__img{width:100%;height:100%;object-fit:cover;display:block;transform:translateZ(40px) scale(1.04);}
   #dl-{{ section.id }} .dl-coin{position:absolute;bottom:16px;right:16px;width:84px;height:84px;perspective:600px;transform:translateZ(70px);}
   #dl-{{ section.id }} .dl-coin__inner{width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,var(--gl),var(--go));color:#16110A;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.1rem;box-shadow:0 10px 26px rgba(203,170,106,.5),inset 0 0 0 3px rgba(255,255,255,.35);transform-style:preserve-3d;animation:dl-spin 5s linear infinite;}
+  #dl-{{ section.id }} .dl-thumbs{display:flex;gap:10px;margin-top:14px;}
+  #dl-{{ section.id }} .dl-thumb{width:64px;height:64px;border-radius:12px;overflow:hidden;padding:0;cursor:pointer;background:#0C111A;border:2px solid var(--nb);transition:border-color .2s,transform .2s;}
+  #dl-{{ section.id }} .dl-thumb img{width:100%;height:100%;object-fit:cover;opacity:.7;transition:opacity .2s;}
+  #dl-{{ section.id }} .dl-thumb.is-active{border-color:var(--go);transform:translateY(-2px);}
+  #dl-{{ section.id }} .dl-thumb.is-active img{opacity:1;}
 
   #dl-{{ section.id }} .dl-logo{width:84px;height:84px;object-fit:contain;margin-bottom:14px;filter:drop-shadow(0 8px 20px rgba(0,0,0,.5));animation:dl-float 5s ease-in-out infinite;}
   #dl-{{ section.id }} .dl-eyebrow{font-size:.78rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--go);margin-bottom:12px;}
@@ -228,6 +257,14 @@
   #dl-{{ section.id }} .dl-final__price{display:flex;justify-content:center;align-items:baseline;gap:12px;margin-bottom:18px;}
   #dl-{{ section.id }} .dl-final .dl-btn{margin:0 auto;}
 
+  /* Sticky mobile CTA */
+  #dl-{{ section.id }} .dl-sticky{position:fixed;bottom:0;left:0;right:0;z-index:60;display:none;align-items:center;gap:14px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:rgba(9,13,20,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--nb);}
+  #dl-{{ section.id }} .dl-sticky__left{flex-shrink:0;line-height:1.1;}
+  #dl-{{ section.id }} .dl-sticky__price{font-weight:900;font-size:1.15rem;color:var(--gl);}
+  #dl-{{ section.id }} .dl-sticky__old{display:block;font-size:.72rem;color:var(--mt);text-decoration:line-through;}
+  #dl-{{ section.id }} .dl-sticky__form{flex:1;margin:0;}
+  #dl-{{ section.id }} .dl-btn--sm{padding:14px 18px;font-size:1rem;border-radius:13px;max-width:none;}
+
   /* 3D animations */
   @keyframes dl-spin{0%{transform:rotateY(0deg);}100%{transform:rotateY(360deg);}}
   @keyframes dl-float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
@@ -247,6 +284,8 @@
     #dl-{{ section.id }} .dl-steps,#dl-{{ section.id }} .dl-reviews,#dl-{{ section.id }} .dl-guars{grid-template-columns:1fr;}
     #dl-{{ section.id }} .dl-btn{max-width:none;}
     #dl-{{ section.id }} .dl-logo{width:64px;height:64px;}
+    #dl-{{ section.id }} .dl-sticky{display:flex;}
+    #dl-{{ section.id }} .dl-final{margin-bottom:96px;}
   }
 </style>
 
@@ -266,6 +305,17 @@
     } else {
       items.forEach(function(el){ el.classList.add('dl-in'); });
     }
+
+    // Gallery thumbnails
+    var main = document.getElementById('dl-main-{{ section.id }}');
+    var thumbs = root.querySelectorAll('.dl-thumb');
+    thumbs.forEach(function(t){
+      t.addEventListener('click', function(){
+        if(main){ main.src = t.getAttribute('data-full'); }
+        thumbs.forEach(function(x){ x.classList.remove('is-active'); });
+        t.classList.add('is-active');
+      });
+    });
 
     // 3D tilt on hero media
     if(!reduce){
