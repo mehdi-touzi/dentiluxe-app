@@ -1,0 +1,34 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ * ------------------------------------------------------------
+ */{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "blocks": {
+        "title": { "type": "text", "name": "t:names.title", "settings": { "text": "<h1>{{ closest.page.title }}</h1>", "width": "100%", "max_width": "normal", "alignment": "center", "type_preset": "h2", "font": "var(--font-primary--family)", "line_height": "normal", "letter_spacing": "normal", "case": "none", "wrap": "pretty" }, "blocks": {} },
+        "content": { "type": "text", "name": "t:names.content", "settings": { "text": "{{ closest.page.content }}", "width": "100%", "max_width": "narrow", "alignment": "center", "type_preset": "rte", "font": "var(--font-primary--family)", "line_height": "normal", "letter_spacing": "normal", "case": "none", "wrap": "pretty" }, "blocks": {} }
+      },
+      "block_order": ["title", "content"],
+      "settings": { "content_direction": "column", "gap": 32, "background_color": "{{ settings.color_palette.background }}", "padding-block-start": 40, "padding-block-end": 0 }
+    },
+    "form": {
+      "type": "section",
+      "blocks": {
+        "contact_form_UwiCkQ": {
+          "type": "contact-form",
+          "settings": { "width": "custom", "custom_width": 50, "width_mobile": "custom", "custom_width_mobile": 100, "input_style": "default", "padding-block-start": 0, "padding-block-end": 0 },
+          "blocks": {
+            "submit-button": { "type": "contact-form-submit-button", "static": true, "settings": { "label": "Envoyer", "style_class": "button", "width": "fit-content" }, "blocks": {} }
+          },
+          "block_order": []
+        }
+      },
+      "block_order": ["contact_form_UwiCkQ"],
+      "name": "t:names.contact_form",
+      "settings": { "content_direction": "column", "vertical_on_mobile": true, "horizontal_alignment": "flex-start", "vertical_alignment": "center", "align_baseline": false, "horizontal_alignment_flex_direction_column": "center", "vertical_alignment_flex_direction_column": "center", "gap": 32, "section_width": "page-width", "background_media": "none", "background_color": "{{ settings.color_palette.background }}", "border": "none", "toggle_overlay": false, "padding-block-start": 32, "padding-block-end": 84 }
+    }
+  },
+  "order": ["main", "form"]
+}

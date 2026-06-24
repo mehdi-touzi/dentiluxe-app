@@ -96,3 +96,21 @@ navy/or) qui remplace les blocs Horizon génériques. Contenu :
 `templates/index.json` ne charge plus que cette section.
 Construit sur le thème **« Denti Luxe — Premium »**
 (`gid://shopify/OnlineStoreTheme/162660384987`, UNPUBLISHED) → **à publier**.
+
+## 6. Logo + langue FR + animations 3D + autres pages
+
+- **Logo** uploadé dans Files (`shopify://shop_images/denti-luxe-logo.png`), défini
+  dans le header (`config/settings_data.json` → `logo`) et affiché dans le hero de la landing.
+- **Français** : langue FR activée et publiée ; menu traduit (Accueil / Boutique /
+  Contact) ; littéraux traduits (bandeau « Bienvenue chez Denti Luxe », Panier,
+  « Vous aimerez aussi », « Tout voir », « Envoyer »).
+- **Animations 3D** (section landing) : tilt 3D de l'image produit au survol (suivi
+  souris), médaillon −% en rotation 3D, logo flottant, cartes bénéfices en relief 3D
+  au survol, apparition au scroll (IntersectionObserver). `prefers-reduced-motion` respecté.
+- **Autres pages** : header (logo + annonce FR), panier (FR), contact (FR).
+- Tout sur le thème **« Denti Luxe — Premium v2 »**
+  (`gid://shopify/OnlineStoreTheme/162660778203`, UNPUBLISHED) → **à publier**.
+
+> Pour une boutique 100 % FR par défaut : Admin → Paramètres → Langues → définir
+> **Français** comme langue par défaut (les libellés système comme « Add to cart »
+> basculent alors automatiquement via `locales/fr.json`).
