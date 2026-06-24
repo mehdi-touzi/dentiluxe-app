@@ -1,0 +1,307 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */{
+  "sections": {
+    "hero_main": {
+      "type": "hero",
+      "blocks": {
+        "eyebrow": {
+          "type": "text",
+          "settings": {
+            "text": "<p>OFFRE DE LANCEMENT · PAIEMENT À LA LIVRAISON</p>",
+            "text_color": "#E6D09A",
+            "width": "100%",
+            "max_width": "narrow",
+            "alignment": "center",
+            "type_preset": "h6",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "padding-block-end": 0
+          }
+        },
+        "heading": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Un sourire propre et sain, comme chez le dentiste</p>",
+            "text_color": "#FFFFFF",
+            "width": "100%",
+            "max_width": "narrow",
+            "alignment": "center",
+            "type_preset": "h1",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "padding-block-end": 0
+          }
+        },
+        "subtext": {
+          "type": "text",
+          "settings": {
+            "text": "<p>L'hydropulseur sans fil Denti Luxe nettoie en profondeur là où la brosse n'atteint pas — idéal pour facettes, bridges &amp; gencives sensibles. Livraison partout au Maroc, vous payez à la réception.</p>",
+            "text_color": "#E9EBEF",
+            "width": "100%",
+            "max_width": "narrow",
+            "alignment": "center",
+            "type_preset": "rte",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "padding-block-end": 20
+          }
+        },
+        "cta": {
+          "type": "button",
+          "settings": {
+            "label": "Commander — 299 DH au lieu de 449",
+            "link": "shopify://products/hydropulseur-denti-luxe-jet-dentaire-sans-fil",
+            "style_class": "button-primary"
+          }
+        }
+      },
+      "block_order": [
+        "eyebrow",
+        "heading",
+        "subtext",
+        "cta"
+      ],
+      "settings": {
+        "media_type_1": "image",
+        "image_1": "shopify://shop_images/denti-luxe-1.png",
+        "stack_media_on_mobile": false,
+        "content_direction": "column",
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 18,
+        "section_width": "full-width",
+        "section_height": "large",
+        "toggle_overlay": true,
+        "overlay_color": "#0B1320D9",
+        "overlay_style": "gradient",
+        "gradient_direction": "to top",
+        "padding-block-start": 72,
+        "padding-block-end": 72
+      }
+    },
+    "featured_product": {
+      "type": "product-list",
+      "blocks": {
+        "static-header": {
+          "type": "_product-list-content",
+          "name": "t:names.header",
+          "static": true,
+          "settings": {
+            "content_direction": "row",
+            "horizontal_alignment": "space-between",
+            "vertical_alignment": "flex-end",
+            "align_baseline": true,
+            "gap": 12,
+            "width": "fill",
+            "height": "fit",
+            "background_media": "none",
+            "border": "none"
+          },
+          "blocks": {
+            "fl_title": {
+              "type": "_product-list-text",
+              "name": "t:names.collection_title",
+              "settings": {
+                "text": "<h3>Découvrez l'Hydropulseur Denti Luxe</h3>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "h4",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty"
+              },
+              "blocks": {}
+            },
+            "fl_button": {
+              "type": "_product-list-button",
+              "name": "t:names.product_list_button",
+              "settings": {
+                "label": "Voir le produit",
+                "open_in_new_tab": false,
+                "style_class": "link",
+                "width": "fit-content"
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "fl_title",
+            "fl_button"
+          ]
+        },
+        "static-product-card": {
+          "type": "_product-card",
+          "name": "t:names.product_card",
+          "static": true,
+          "settings": {
+            "product_card_gap": 4,
+            "border": "none"
+          },
+          "blocks": {
+            "pc_gallery": {
+              "type": "_product-card-gallery",
+              "name": "t:names.product_card_media",
+              "settings": {
+                "image_ratio": "adapt",
+                "border": "none"
+              },
+              "blocks": {}
+            },
+            "pc_title": {
+              "type": "product-title",
+              "name": "t:names.product_title",
+              "settings": {
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "padding-block-start": 4
+              },
+              "blocks": {}
+            },
+            "pc_price": {
+              "type": "price",
+              "name": "t:names.product_price",
+              "settings": {
+                "show_sale_price_first": true,
+                "type_preset": "h6",
+                "width": "100%",
+                "alignment": "left"
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "pc_gallery",
+            "pc_title",
+            "pc_price"
+          ]
+        }
+      },
+      "name": "Hydropulseur Denti Luxe",
+      "settings": {
+        "collection": "all",
+        "layout_type": "grid",
+        "carousel_on_mobile": false,
+        "max_products": 4,
+        "columns": 4,
+        "mobile_columns": "2",
+        "columns_gap": 12,
+        "rows_gap": 24,
+        "section_width": "page-width",
+        "gap": 28,
+        "background_color": "{{ settings.color_palette.background }}",
+        "padding-block-start": 56,
+        "padding-block-end": 56
+      }
+    },
+    "hero_cta": {
+      "type": "hero",
+      "blocks": {
+        "c_eyebrow": {
+          "type": "text",
+          "settings": {
+            "text": "<p>✓ PAIEMENT À LA LIVRAISON   ·   ✓ LIVRAISON 24–72H   ·   ✓ SATISFAIT OU REMBOURSÉ</p>",
+            "text_color": "#E6D09A",
+            "width": "100%",
+            "max_width": "narrow",
+            "alignment": "center",
+            "type_preset": "h6",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "padding-block-end": 0
+          }
+        },
+        "c_heading": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Prêt à retrouver un sourire éclatant&nbsp;?</p>",
+            "text_color": "#FFFFFF",
+            "width": "100%",
+            "max_width": "narrow",
+            "alignment": "center",
+            "type_preset": "h2",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "padding-block-end": 0
+          }
+        },
+        "c_subtext": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Commandez en 30 secondes. Vous ne payez qu'à la réception du colis, partout au Maroc.</p>",
+            "text_color": "#E9EBEF",
+            "width": "100%",
+            "max_width": "narrow",
+            "alignment": "center",
+            "type_preset": "rte",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "padding-block-end": 20
+          }
+        },
+        "c_cta": {
+          "type": "button",
+          "settings": {
+            "label": "Je commande maintenant",
+            "link": "shopify://products/hydropulseur-denti-luxe-jet-dentaire-sans-fil",
+            "style_class": "button-primary"
+          }
+        }
+      },
+      "block_order": [
+        "c_eyebrow",
+        "c_heading",
+        "c_subtext",
+        "c_cta"
+      ],
+      "settings": {
+        "media_type_1": "image",
+        "image_1": "shopify://shop_images/denti-luxe-2.png",
+        "stack_media_on_mobile": false,
+        "content_direction": "column",
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 18,
+        "section_width": "full-width",
+        "section_height": "medium",
+        "toggle_overlay": true,
+        "overlay_color": "#0B1320E6",
+        "overlay_style": "gradient",
+        "gradient_direction": "to bottom",
+        "padding-block-start": 64,
+        "padding-block-end": 64
+      }
+    }
+  },
+  "order": [
+    "hero_main",
+    "featured_product",
+    "hero_cta"
+  ]
+}

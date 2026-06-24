@@ -41,5 +41,25 @@ Appliquée sur une **copie du thème** : **« Denti Luxe — Navy & Or »**
 
 ### Publication — action manuelle requise
 La publication de thème est bloquée via l'API pour sécurité. Pour activer le thème :
-**Shopify Admin → Boutique en ligne → Thèmes → « Denti Luxe — Navy & Or » → Publier**
+**Shopify Admin → Boutique en ligne → Thèmes → … → Publier**
 (prévisualisez d'abord pour valider le rendu navy/or).
+
+## 3. Page d'accueil « landing » navy/or
+
+Construite sur le thème **« Denti Luxe — Navy & Or (Accueil) »**
+(`gid://shopify/OnlineStoreTheme/162659631323`, UNPUBLISHED).
+Template sauvegardé dans `shopify-theme/templates/index.json`.
+
+Structure (3 sections, toutes navy/or) :
+1. **Hero principal** — image produit + dégradé navy, sur-titre or « OFFRE DE LANCEMENT ·
+   PAIEMENT À LA LIVRAISON », H1 blanc « Un sourire propre et sain, comme chez le dentiste »,
+   sous-titre, **CTA or « Commander — 299 DH au lieu de 449 »** → fiche produit.
+2. **Section produit** — « Découvrez l'Hydropulseur Denti Luxe » + carte produit (prix barré).
+3. **Hero de clôture (réassurance)** — badges or COD / livraison 24–72h / satisfait ou remboursé,
+   H2 « Prêt à retrouver un sourire éclatant ? », **CTA « Je commande maintenant »**.
+
+### Pour mettre en ligne cette page d'accueil
+**Admin → Boutique en ligne → Thèmes → « Denti Luxe — Navy & Or (Accueil) » → Prévisualiser → Publier.**
+C'est ce thème (et non la version sans page d'accueil) qu'il faut publier pour avoir
+à la fois le palette navy/or **et** la landing produit. Les anciens thèmes peuvent ensuite
+être supprimés.
