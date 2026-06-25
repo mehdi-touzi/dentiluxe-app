@@ -40,9 +40,9 @@
         <div class="dlp-stars-row"><span class="dlp-stars">★★★★★</span><span class="dlp-muted">4.9/5 · +1 200 clients satisfaits</span></div>
 
         <div class="dlp-price">
-          <span class="dlp-now">{{ p.price | money }}</span>
-          {% if p.compare_at_price > p.price %}<span class="dlp-old">{{ p.compare_at_price | money }}</span>{% endif %}
-          {% if disc > 0 %}<span class="dlp-save">Économisez {{ p.compare_at_price | minus: p.price | money }}</span>{% endif %}
+          <span class="dlp-now dlp-jnow">{{ p.price | money }}</span>
+          {% if p.compare_at_price > p.price %}<span class="dlp-old dlp-jold">{{ p.compare_at_price | money }}</span>{% endif %}
+          <span class="dlp-save dlp-jsave">{% if disc > 0 %}Économisez {{ p.compare_at_price | minus: p.price | money }}{% endif %}</span>
         </div>
 
         <p class="dlp-lead">Le jet d’eau pulsé qui nettoie en profondeur là où la brosse et le fil n’atteignent pas. Idéal pour <b>facettes, bridges &amp; gencives sensibles</b>.</p>
@@ -54,10 +54,31 @@
           <span class="dlp-chip">Sans fil</span>
         </div>
 
+        <div class="dlp-packs" role="radiogroup" aria-label="Choisissez votre pack">
+          {%- for variant in p.variants -%}
+            {%- assign vsave = variant.compare_at_price | minus: variant.price -%}
+            <label class="dlp-pack{% if forloop.index == 2 %} dlp-pack--pop{% endif %}{% if forloop.first %} is-sel{% endif %}"
+              data-vid="{{ variant.id }}"
+              data-now="{{ variant.price | money }}"
+              data-old="{% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price | money }}{% endif %}"
+              data-save="{% if vsave > 0 %}Économisez {{ vsave | money }}{% endif %}"
+              data-label="{% if variant.available %}Commander — {{ variant.price | money }}{% else %}Rupture de stock{% endif %}">
+              <input type="radio" name="dlp-pack-{{ section.id }}" value="{{ variant.id }}"{% if forloop.first %} checked{% endif %}>
+              <span class="dlp-pack__radio"></span>
+              <span class="dlp-pack__txt">
+                <b class="dlp-pack__name">{{ variant.title }}</b>
+                {% if forloop.index == 2 %}<em class="dlp-pack__tag">★ Le plus choisi</em>{% endif %}
+                {% if vsave > 0 %}<span class="dlp-pack__save">Économisez {{ vsave | money }}</span>{% endif %}
+              </span>
+              <span class="dlp-pack__price"><b>{{ variant.price | money }}</b>{% if variant.compare_at_price > variant.price %}<s>{{ variant.compare_at_price | money }}</s>{% endif %}</span>
+            </label>
+          {%- endfor -%}
+        </div>
+
         {% form 'product', p, class: 'dlp-form' %}
-          <input type="hidden" name="id" value="{{ v.id }}">
+          <input type="hidden" name="id" value="{{ v.id }}" class="dlp-vid">
           <input type="hidden" name="return_to" value="/checkout">
-          <button type="submit" class="dlp-btn" {% unless v.available %}disabled{% endunless %}>
+          <button type="submit" class="dlp-btn dlp-jbtn" {% unless v.available %}disabled{% endunless %}>
             {% if v.available %}Commander maintenant — {{ p.price | money }}{% else %}Rupture de stock{% endif %}
           </button>
         {% endform %}
@@ -123,9 +144,9 @@
     <div class="dlp-final dlp-rv">
       <h2 class="dlp-final__h">Prêt à retrouver un sourire éclatant ?</h2>
       <p class="dlp-final__p">Commandez en 30 secondes · Paiement à la livraison · Satisfait ou remboursé.</p>
-      <div class="dlp-final__price"><span class="dlp-now">{{ p.price | money }}</span>{% if p.compare_at_price > p.price %}<span class="dlp-old">{{ p.compare_at_price | money }}</span>{% endif %}</div>
+      <div class="dlp-final__price"><span class="dlp-now dlp-jnow">{{ p.price | money }}</span>{% if p.compare_at_price > p.price %}<span class="dlp-old dlp-jold">{{ p.compare_at_price | money }}</span>{% endif %}</div>
       {% form 'product', p, class: 'dlp-form' %}
-        <input type="hidden" name="id" value="{{ v.id }}">
+        <input type="hidden" name="id" value="{{ v.id }}" class="dlp-vid">
         <input type="hidden" name="return_to" value="/checkout">
         <button type="submit" class="dlp-btn" {% unless v.available %}disabled{% endunless %}>{% if v.available %}Je commande maintenant{% else %}Rupture de stock{% endif %}</button>
       {% endform %}
@@ -134,9 +155,9 @@
 
   <!-- STICKY MOBILE BAR -->
   <div class="dlp-sticky">
-    <div class="dlp-sticky__p"><span class="dlp-now">{{ p.price | money }}</span>{% if p.compare_at_price > p.price %}<span class="dlp-old">{{ p.compare_at_price | money }}</span>{% endif %}</div>
+    <div class="dlp-sticky__p"><span class="dlp-now dlp-jnow">{{ p.price | money }}</span>{% if p.compare_at_price > p.price %}<span class="dlp-old dlp-jold">{{ p.compare_at_price | money }}</span>{% endif %}</div>
     {% form 'product', p, class: 'dlp-sticky__f' %}
-      <input type="hidden" name="id" value="{{ v.id }}">
+      <input type="hidden" name="id" value="{{ v.id }}" class="dlp-vid">
       <input type="hidden" name="return_to" value="/checkout">
       <button type="submit" class="dlp-btn" {% unless v.available %}disabled{% endunless %}>Commander</button>
     {% endform %}
@@ -177,6 +198,26 @@
   #dlp-{{ section.id }} .dlp-lead{color:var(--dm);font-size:1rem;line-height:1.65;margin:0 0 16px;}
   #dlp-{{ section.id }} .dlp-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
   #dlp-{{ section.id }} .dlp-chip{font-size:.78rem;font-weight:600;color:var(--gl);background:var(--nv2);border:1px solid var(--nb);padding:7px 12px;border-radius:999px;}
+  #dlp-{{ section.id }} .dlp-jsave{font-size:.75rem;font-weight:700;color:var(--gn);background:rgba(51,186,134,.14);padding:5px 10px;border-radius:999px;}
+  #dlp-{{ section.id }} .dlp-jsave:empty{display:none;}
+
+  /* PACK SELECTOR */
+  #dlp-{{ section.id }} .dlp-packs{display:flex;flex-direction:column;gap:10px;margin:0 0 20px;}
+  #dlp-{{ section.id }} .dlp-pack{position:relative;display:flex;align-items:center;gap:12px;padding:14px 16px;border:1.5px solid var(--nb);border-radius:16px;background:var(--nv2);cursor:pointer;transition:border-color .2s,background .2s,transform .12s;}
+  #dlp-{{ section.id }} .dlp-pack:hover{border-color:rgba(203,170,106,.5);}
+  #dlp-{{ section.id }} .dlp-pack.is-sel{border-color:var(--go);background:linear-gradient(180deg,rgba(203,170,106,.10),rgba(203,170,106,.02));}
+  #dlp-{{ section.id }} .dlp-pack input{position:absolute;opacity:0;pointer-events:none;}
+  #dlp-{{ section.id }} .dlp-pack__radio{flex-shrink:0;width:22px;height:22px;border-radius:50%;border:2px solid var(--nb);transition:border-color .2s;position:relative;}
+  #dlp-{{ section.id }} .dlp-pack.is-sel .dlp-pack__radio{border-color:var(--go);}
+  #dlp-{{ section.id }} .dlp-pack.is-sel .dlp-pack__radio::after{content:"";position:absolute;inset:4px;border-radius:50%;background:linear-gradient(135deg,var(--gl),var(--go));}
+  #dlp-{{ section.id }} .dlp-pack__txt{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;}
+  #dlp-{{ section.id }} .dlp-pack__name{font-size:.98rem;}
+  #dlp-{{ section.id }} .dlp-pack__tag{font-style:normal;font-size:.7rem;font-weight:800;letter-spacing:.4px;color:#16110A;background:linear-gradient(135deg,var(--gl),var(--go));padding:3px 8px;border-radius:999px;width:fit-content;margin-top:2px;}
+  #dlp-{{ section.id }} .dlp-pack__save{font-size:.76rem;color:var(--gn);font-weight:600;}
+  #dlp-{{ section.id }} .dlp-pack__price{text-align:right;display:flex;flex-direction:column;line-height:1.2;}
+  #dlp-{{ section.id }} .dlp-pack__price b{font-size:1.05rem;color:var(--gl);}
+  #dlp-{{ section.id }} .dlp-pack__price s{font-size:.78rem;color:var(--mt);}
+  #dlp-{{ section.id }} .dlp-pack--pop{border-color:rgba(203,170,106,.45);}
   #dlp-{{ section.id }} .dlp-form{margin:0 0 12px;}
   #dlp-{{ section.id }} .dlp-btn{display:flex;width:100%;align-items:center;justify-content:center;gap:9px;background:linear-gradient(180deg,var(--gl),var(--go));color:#16110A;border:none;border-radius:16px;padding:18px 22px;font-weight:800;font-size:1.05rem;cursor:pointer;box-shadow:0 12px 30px rgba(203,170,106,.32);transition:transform .12s,box-shadow .2s;font-family:inherit;}
   #dlp-{{ section.id }} .dlp-btn:hover{transform:translateY(-2px);box-shadow:0 16px 38px rgba(203,170,106,.42);}
@@ -267,6 +308,27 @@
       var io=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){x.target.classList.add('dl-in');io.unobserve(x.target);}});},{threshold:.12});
       items.forEach(function(el){io.observe(el);});
     }else{items.forEach(function(el){el.classList.add('dl-in');});}
+
+    // Pack selector → updates every buy form + price displays
+    var packs=root.querySelectorAll('.dlp-pack');
+    function selectPack(pack){
+      packs.forEach(function(x){x.classList.remove('is-sel');var r=x.querySelector('input');if(r)r.checked=false;});
+      pack.classList.add('is-sel');
+      var r=pack.querySelector('input');if(r)r.checked=true;
+      var vid=pack.getAttribute('data-vid');
+      var now=pack.getAttribute('data-now');
+      var old=pack.getAttribute('data-old');
+      var save=pack.getAttribute('data-save');
+      var label=pack.getAttribute('data-label');
+      root.querySelectorAll('.dlp-vid').forEach(function(i){i.value=vid;});
+      root.querySelectorAll('.dlp-jnow').forEach(function(e){e.textContent=now;});
+      root.querySelectorAll('.dlp-jold').forEach(function(e){e.textContent=old||'';e.style.display=old?'':'none';});
+      var sv=root.querySelector('.dlp-jsave');if(sv){sv.textContent=save||'';}
+      var btn=root.querySelector('.dlp-jbtn');if(btn){btn.textContent=label;}
+    }
+    packs.forEach(function(pack){
+      pack.addEventListener('click',function(){selectPack(pack);});
+    });
   })();
 </script>
 

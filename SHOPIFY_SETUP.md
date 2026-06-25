@@ -194,3 +194,31 @@ Le thème live « Signature » étant publié, l'API bloque l'écriture dessus :
 jour a été faite sur un **duplicata** → **« Denti Luxe — Signature (Cinéma) »**
 (`gid://shopify/OnlineStoreTheme/162710225115`, UNPUBLISHED) → **à prévisualiser puis publier.**
 Le duplicata contient déjà la page produit et les réglages (logo, etc.).
+
+## 10. Bundles (packs) + recommandation app COD
+
+### Packs créés sur le produit (natif, sans app)
+Le produit a maintenant **3 formats** (option « Format », prix dégressifs) :
+
+| Format | Prix | Barré | Variant ID |
+|--------|------|-------|------------|
+| 1 unité | 299 | 449 | 48902730711259 |
+| Pack de 2 | 499 | 598 | 48908715065563 |
+| Pack de 3 | 699 | 897 | 48908715098331 |
+
+`inventoryPolicy: CONTINUE` + suivi de stock désactivé → toujours commandables (COD).
+
+### Sélecteur de packs dans la page produit
+`sections/denti-product.liquid` (≈ 28 Ko) intègre un **sélecteur radio navy/or**
+(boucle `p.variants`, donc dynamique). À la sélection : le prix affiché, le bouton
+et **toutes les formes d'achat** (buy box, CTA final, barre mobile) se mettent à jour
+via JS (classes `dlp-vid` / `dlp-jnow` / `dlp-jold` / `dlp-jsave` / `dlp-jbtn`).
+Le **Pack de 2** est marqué « ★ Le plus choisi ». Mis à jour sur le thème draft
+« Signature (Cinéma) » (162710225115).
+
+### App COD — recommandée (à installer par le marchand)
+L'Admin API **ne permet pas** d'installer une app. Pour le marché marocain, installer
+depuis l'App Store **Releasit COD Form & Upsells** (plan gratuit pour démarrer) :
+formulaire COD simplifié (Nom/Tél/Ville), offres de quantité (bundles) et upsells.
+Une fois installée, adapter les boutons « Commander » du thème pour déclencher son
+formulaire au lieu du checkout standard.
