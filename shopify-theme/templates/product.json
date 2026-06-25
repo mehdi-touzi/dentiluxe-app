@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "denti_product": {
+      "type": "denti-product",
+      "settings": {}
+    }
+  },
+  "order": ["denti_product"]
+}

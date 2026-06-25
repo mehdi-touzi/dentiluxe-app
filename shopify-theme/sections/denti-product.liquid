@@ -1,0 +1,279 @@
+{%- assign p = product -%}
+{%- assign v = p.selected_or_first_available_variant -%}
+{%- assign disc = 0 -%}
+{%- if p.compare_at_price > p.price -%}
+  {%- assign disc = p.compare_at_price | minus: p.price | times: 100 | divided_by: p.compare_at_price -%}
+{%- endif -%}
+
+<section class="dlp" id="dlp-{{ section.id }}">
+  <div class="dlp-announce">
+    <span class="dlp-dot"></span> Offre de lancement{% if disc > 0 %} · −{{ disc }}%{% endif %} · Paiement à la livraison partout au Maroc
+  </div>
+
+  <div class="dlp-wrap">
+    <nav class="dlp-crumb"><a href="{{ routes.root_url }}">Accueil</a> <span>›</span> <a href="{{ routes.all_products_collection_url }}">Boutique</a> <span>›</span> <b>{{ p.title }}</b></nav>
+
+    <div class="dlp-top">
+      <!-- GALLERY -->
+      <div class="dlp-gallery">
+        <div class="dlp-stage">
+          {% if disc > 0 %}<span class="dlp-badge">−{{ disc }}%</span>{% endif %}
+          {%- for media in p.media limit: 1 -%}
+            <img id="dlp-main-{{ section.id }}" class="dlp-main" src="{{ media | image_url: width: 1200 }}" alt="{{ p.title | escape }}" width="700" height="700" loading="eager">
+          {%- endfor -%}
+        </div>
+        {% if p.media.size > 1 %}
+        <div class="dlp-thumbs">
+          {%- for media in p.media limit: 8 -%}
+            <button type="button" class="dlp-thumb{% if forloop.first %} is-active{% endif %}" data-full="{{ media | image_url: width: 1200 }}" aria-label="Image {{ forloop.index }}">
+              <img src="{{ media | image_url: width: 200 }}" alt="" width="80" height="80" loading="lazy">
+            </button>
+          {%- endfor -%}
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- BUY BOX -->
+      <div class="dlp-buy">
+        <div class="dlp-eyebrow">Denti Luxe · Hydropulseur sans fil</div>
+        <h1 class="dlp-title">{{ p.title }}</h1>
+        <div class="dlp-stars-row"><span class="dlp-stars">★★★★★</span><span class="dlp-muted">4.9/5 · +1 200 clients satisfaits</span></div>
+
+        <div class="dlp-price">
+          <span class="dlp-now">{{ p.price | money }}</span>
+          {% if p.compare_at_price > p.price %}<span class="dlp-old">{{ p.compare_at_price | money }}</span>{% endif %}
+          {% if disc > 0 %}<span class="dlp-save">Économisez {{ p.compare_at_price | minus: p.price | money }}</span>{% endif %}
+        </div>
+
+        <p class="dlp-lead">Le jet d’eau pulsé qui nettoie en profondeur là où la brosse et le fil n’atteignent pas. Idéal pour <b>facettes, bridges &amp; gencives sensibles</b>.</p>
+
+        <div class="dlp-chips">
+          <span class="dlp-chip">3 modes de jet</span>
+          <span class="dlp-chip">Étanche IPX7</span>
+          <span class="dlp-chip">Recharge USB</span>
+          <span class="dlp-chip">Sans fil</span>
+        </div>
+
+        {% form 'product', p, class: 'dlp-form' %}
+          <input type="hidden" name="id" value="{{ v.id }}">
+          <input type="hidden" name="return_to" value="/checkout">
+          <button type="submit" class="dlp-btn" {% unless v.available %}disabled{% endunless %}>
+            {% if v.available %}Commander maintenant — {{ p.price | money }}{% else %}Rupture de stock{% endif %}
+          </button>
+        {% endform %}
+
+        <div class="dlp-cod"><span class="dlp-check">✓</span> Vous payez <b>à la livraison</b> · aucune avance · livraison 24–72h</div>
+
+        <div class="dlp-assur">
+          <div class="dlp-assur__i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h20v12H2zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6"/></svg><span>Paiement à la livraison</span></div>
+          <div class="dlp-assur__i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h11v9H3zM14 9h4l3 3v3h-7zM7 18a2 2 0 1 0 .01 0M17 18a2 2 0 1 0 .01 0"/></svg><span>Livré partout au Maroc</span></div>
+          <div class="dlp-assur__i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg><span>Satisfait ou remboursé</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BENEFITS -->
+    <h2 class="dlp-h2 dlp-rv">Pourquoi vous allez l’adopter</h2>
+    <div class="dlp-grid">
+      <div class="dlp-card dlp-rv"><svg class="dlp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.6 6.4L20 10l-6.4 1.6L12 18l-1.6-6.4L4 10l6.4-1.6z"/></svg><h3>Nettoyage en profondeur</h3><p>Atteint les zones inaccessibles à la brosse.</p></div>
+      <div class="dlp-card dlp-rv"><svg class="dlp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><h3>Protège vos facettes</h3><p>Nettoie en douceur facettes, bridges &amp; implants.</p></div>
+      <div class="dlp-card dlp-rv"><svg class="dlp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20M8 14s1.5 2 4 2 4-2 4-2M9 9v.01M15 9v.01"/></svg><h3>Gencives plus saines</h3><p>Réduit la plaque et la mauvaise haleine.</p></div>
+      <div class="dlp-card dlp-rv"><svg class="dlp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg><h3>Sans fil &amp; étanche</h3><p>3 modes de jet · rechargeable USB · IPX7.</p></div>
+    </div>
+
+    <!-- SPECS + DESCRIPTION -->
+    <div class="dlp-split">
+      <div class="dlp-specs dlp-rv">
+        <h2 class="dlp-h2 dlp-h2--flush">Caractéristiques</h2>
+        <table class="dlp-table">
+          <tr><th>Type</th><td>Hydropulseur sans fil</td></tr>
+          <tr><th>Modes de jet</th><td>3 (Soft · Normal · Pulse)</td></tr>
+          <tr><th>Étanchéité</th><td>IPX7 (utilisable sous la douche)</td></tr>
+          <tr><th>Recharge</th><td>USB</td></tr>
+          <tr><th>Autonomie</th><td>Plusieurs jours par charge</td></tr>
+          <tr><th>Idéal pour</th><td>Facettes · bridges · implants · gencives sensibles</td></tr>
+          <tr><th>Dans la boîte</th><td>Appareil + embouts + câble de recharge</td></tr>
+        </table>
+      </div>
+      <div class="dlp-desc dlp-rv">
+        <h2 class="dlp-h2 dlp-h2--flush">Description</h2>
+        <div class="dlp-rte">{{ p.description }}</div>
+      </div>
+    </div>
+
+    <!-- REVIEWS -->
+    <div class="dlp-rev-head dlp-rv"><h2 class="dlp-h2 dlp-h2--flush">Avis clients</h2><span class="dlp-stars">★★★★★ <span class="dlp-muted">4.9/5</span></span></div>
+    <div class="dlp-reviews">
+      <figure class="dlp-review dlp-rv"><div class="dlp-review__top"><span class="dlp-av">S</span><div><b>Salma</b> · Rabat<br><span class="dlp-verif">✓ Achat vérifié</span></div></div><blockquote>« Depuis que j’ai mes facettes, l’hydropulseur est devenu indispensable. Mes gencives sont nickel ! »</blockquote></figure>
+      <figure class="dlp-review dlp-rv"><div class="dlp-review__top"><span class="dlp-av">Y</span><div><b>Yassine</b> · Témara<br><span class="dlp-verif">✓ Achat vérifié</span></div></div><blockquote>« Sans fil, batterie qui tient, super pratique. Livraison rapide et payé à la réception. Top. »</blockquote></figure>
+      <figure class="dlp-review dlp-rv"><div class="dlp-review__top"><span class="dlp-av">I</span><div><b>Imane</b> · Casablanca<br><span class="dlp-verif">✓ Achat vérifié</span></div></div><blockquote>« Sensation de propreté incroyable, comme après un détartrage. J’adore ✨ »</blockquote></figure>
+    </div>
+
+    <!-- FAQ -->
+    <h2 class="dlp-h2 dlp-rv">Questions fréquentes</h2>
+    <div class="dlp-faq dlp-rv">
+      <details><summary>C’est compatible avec mes facettes / bridges ?<span class="dlp-chev">⌄</span></summary><p>Oui, c’est même recommandé : le jet d’eau nettoie en douceur autour des facettes, bridges et implants sans les abîmer.</p></details>
+      <details><summary>Ça remplace le fil dentaire ?<span class="dlp-chev">⌄</span></summary><p>Oui, et c’est plus efficace et plus doux pour les gencives.</p></details>
+      <details><summary>La batterie tient combien de temps ?<span class="dlp-chev">⌄</span></summary><p>Plusieurs jours d’utilisation par charge. Sans fil, étanche (IPX7), recharge USB.</p></details>
+      <details><summary>Comment je paie ?<span class="dlp-chev">⌄</span></summary><p>Vous payez à la livraison (cash), une fois le colis reçu. Aucune avance.</p></details>
+      <details><summary>Vous livrez où ?<span class="dlp-chev">⌄</span></summary><p>Partout au Maroc, en 24 à 72h selon votre ville.</p></details>
+    </div>
+
+    <!-- FINAL CTA -->
+    <div class="dlp-final dlp-rv">
+      <h2 class="dlp-final__h">Prêt à retrouver un sourire éclatant ?</h2>
+      <p class="dlp-final__p">Commandez en 30 secondes · Paiement à la livraison · Satisfait ou remboursé.</p>
+      <div class="dlp-final__price"><span class="dlp-now">{{ p.price | money }}</span>{% if p.compare_at_price > p.price %}<span class="dlp-old">{{ p.compare_at_price | money }}</span>{% endif %}</div>
+      {% form 'product', p, class: 'dlp-form' %}
+        <input type="hidden" name="id" value="{{ v.id }}">
+        <input type="hidden" name="return_to" value="/checkout">
+        <button type="submit" class="dlp-btn" {% unless v.available %}disabled{% endunless %}>{% if v.available %}Je commande maintenant{% else %}Rupture de stock{% endif %}</button>
+      {% endform %}
+    </div>
+  </div>
+
+  <!-- STICKY MOBILE BAR -->
+  <div class="dlp-sticky">
+    <div class="dlp-sticky__p"><span class="dlp-now">{{ p.price | money }}</span>{% if p.compare_at_price > p.price %}<span class="dlp-old">{{ p.compare_at_price | money }}</span>{% endif %}</div>
+    {% form 'product', p, class: 'dlp-sticky__f' %}
+      <input type="hidden" name="id" value="{{ v.id }}">
+      <input type="hidden" name="return_to" value="/checkout">
+      <button type="submit" class="dlp-btn" {% unless v.available %}disabled{% endunless %}>Commander</button>
+    {% endform %}
+  </div>
+</section>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap');
+  #dlp-{{ section.id }}{--nv:#0B1320;--nv2:#10182A;--nb:#26314B;--go:#CBAA6A;--gl:#E6D09A;--tx:#EEF1F6;--dm:#A7AFBF;--mt:#717B90;--gn:#33BA86;font-family:'DM Sans',system-ui,sans-serif;color:var(--tx);background:var(--nv);display:block;overflow:hidden;}
+  #dlp-{{ section.id }} *{box-sizing:border-box;}
+  #dlp-{{ section.id }} .dlp-wrap{max-width:1120px;margin:0 auto;padding:0 20px 70px;}
+  #dlp-{{ section.id }} .dlp-muted{color:var(--dm);font-size:.82rem;font-weight:500;}
+  #dlp-{{ section.id }} .dlp-stars{color:var(--go);letter-spacing:2px;}
+  #dlp-{{ section.id }} .dlp-announce{background:linear-gradient(90deg,rgba(203,170,106,.18),rgba(203,170,106,.05));border-bottom:1px solid var(--nb);text-align:center;padding:10px 16px;font-size:.78rem;font-weight:600;color:var(--gl);display:flex;gap:8px;align-items:center;justify-content:center;}
+  #dlp-{{ section.id }} .dlp-dot{width:7px;height:7px;border-radius:50%;background:var(--gn);box-shadow:0 0 0 4px rgba(51,186,134,.18);}
+  #dlp-{{ section.id }} .dlp-crumb{font-size:.78rem;color:var(--mt);padding:18px 0 6px;}
+  #dlp-{{ section.id }} .dlp-crumb a{color:var(--dm);text-decoration:none;}#dlp-{{ section.id }} .dlp-crumb b{color:var(--gl);font-weight:600;}#dlp-{{ section.id }} .dlp-crumb span{margin:0 6px;color:var(--nb);}
+
+  #dlp-{{ section.id }} .dlp-top{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:start;padding-top:14px;}
+  #dlp-{{ section.id }} .dlp-gallery{position:sticky;top:18px;}
+  #dlp-{{ section.id }} .dlp-stage{position:relative;border-radius:24px;overflow:hidden;border:1px solid var(--nb);background:radial-gradient(circle at 50% 30%,#1B263F,#0A1120);aspect-ratio:1/1;box-shadow:0 30px 70px rgba(0,0,0,.5);}
+  #dlp-{{ section.id }} .dlp-main{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s;}
+  #dlp-{{ section.id }} .dlp-stage:hover .dlp-main{transform:scale(1.06);}
+  #dlp-{{ section.id }} .dlp-badge{position:absolute;top:14px;left:14px;z-index:2;background:linear-gradient(135deg,var(--gl),var(--go));color:#16110A;font-weight:900;font-size:.95rem;padding:8px 12px;border-radius:12px;box-shadow:0 8px 20px rgba(203,170,106,.45);}
+  #dlp-{{ section.id }} .dlp-thumbs{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
+  #dlp-{{ section.id }} .dlp-thumb{width:72px;height:72px;border-radius:12px;overflow:hidden;border:2px solid var(--nb);background:var(--nv2);padding:0;cursor:pointer;transition:border-color .2s,transform .2s;}
+  #dlp-{{ section.id }} .dlp-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  #dlp-{{ section.id }} .dlp-thumb:hover{transform:translateY(-2px);}
+  #dlp-{{ section.id }} .dlp-thumb.is-active{border-color:var(--go);}
+
+  #dlp-{{ section.id }} .dlp-eyebrow{font-size:.76rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--go);margin-bottom:10px;}
+  #dlp-{{ section.id }} .dlp-title{font-family:'Playfair Display',serif;font-weight:800;font-size:2.05rem;line-height:1.12;margin:0 0 12px;letter-spacing:-.5px;}
+  #dlp-{{ section.id }} .dlp-stars-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+  #dlp-{{ section.id }} .dlp-price{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px;}
+  #dlp-{{ section.id }} .dlp-now{font-family:'Playfair Display',serif;font-size:2.1rem;font-weight:800;background:linear-gradient(95deg,var(--go),var(--gl));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  #dlp-{{ section.id }} .dlp-old{font-size:1.05rem;color:var(--mt);text-decoration:line-through;}
+  #dlp-{{ section.id }} .dlp-save{font-size:.75rem;font-weight:700;color:var(--gn);background:rgba(51,186,134,.14);padding:5px 10px;border-radius:999px;}
+  #dlp-{{ section.id }} .dlp-lead{color:var(--dm);font-size:1rem;line-height:1.65;margin:0 0 16px;}
+  #dlp-{{ section.id }} .dlp-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+  #dlp-{{ section.id }} .dlp-chip{font-size:.78rem;font-weight:600;color:var(--gl);background:var(--nv2);border:1px solid var(--nb);padding:7px 12px;border-radius:999px;}
+  #dlp-{{ section.id }} .dlp-form{margin:0 0 12px;}
+  #dlp-{{ section.id }} .dlp-btn{display:flex;width:100%;align-items:center;justify-content:center;gap:9px;background:linear-gradient(180deg,var(--gl),var(--go));color:#16110A;border:none;border-radius:16px;padding:18px 22px;font-weight:800;font-size:1.05rem;cursor:pointer;box-shadow:0 12px 30px rgba(203,170,106,.32);transition:transform .12s,box-shadow .2s;font-family:inherit;}
+  #dlp-{{ section.id }} .dlp-btn:hover{transform:translateY(-2px);box-shadow:0 16px 38px rgba(203,170,106,.42);}
+  #dlp-{{ section.id }} .dlp-btn[disabled]{opacity:.5;cursor:not-allowed;box-shadow:none;}
+  #dlp-{{ section.id }} .dlp-cod{display:flex;align-items:center;gap:8px;font-size:.86rem;color:var(--gn);font-weight:600;margin-bottom:18px;}
+  #dlp-{{ section.id }} .dlp-check{display:inline-flex;width:18px;height:18px;align-items:center;justify-content:center;border-radius:50%;background:rgba(51,186,134,.16);font-size:.7rem;}
+  #dlp-{{ section.id }} .dlp-assur{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  #dlp-{{ section.id }} .dlp-assur__i{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;background:var(--nv2);border:1px solid var(--nb);border-radius:14px;padding:14px 8px;font-size:.74rem;color:var(--dm);font-weight:600;}
+  #dlp-{{ section.id }} .dlp-assur__i svg{width:24px;height:24px;color:var(--go);}
+
+  #dlp-{{ section.id }} .dlp-h2{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;text-align:center;margin:56px 0 24px;}
+  #dlp-{{ section.id }} .dlp-h2--flush{margin:0 0 16px;text-align:left;font-size:1.5rem;}
+  #dlp-{{ section.id }} .dlp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  #dlp-{{ section.id }} .dlp-card{background:var(--nv2);border:1px solid var(--nb);border-radius:18px;padding:22px;transition:transform .25s,border-color .25s;}
+  #dlp-{{ section.id }} .dlp-card:hover{transform:translateY(-5px);border-color:rgba(203,170,106,.5);}
+  #dlp-{{ section.id }} .dlp-ico{width:30px;height:30px;color:var(--go);margin-bottom:12px;}
+  #dlp-{{ section.id }} .dlp-card h3{font-size:1rem;font-weight:700;margin:0 0 6px;}
+  #dlp-{{ section.id }} .dlp-card p{font-size:.85rem;color:var(--dm);line-height:1.55;margin:0;}
+
+  #dlp-{{ section.id }} .dlp-split{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:56px;align-items:start;}
+  #dlp-{{ section.id }} .dlp-specs,#dlp-{{ section.id }} .dlp-desc{background:var(--nv2);border:1px solid var(--nb);border-radius:18px;padding:24px;}
+  #dlp-{{ section.id }} .dlp-table{width:100%;border-collapse:collapse;font-size:.9rem;}
+  #dlp-{{ section.id }} .dlp-table th{text-align:left;color:var(--mt);font-weight:600;padding:11px 0;width:42%;vertical-align:top;border-bottom:1px solid var(--nb);}
+  #dlp-{{ section.id }} .dlp-table td{padding:11px 0;border-bottom:1px solid var(--nb);color:var(--tx);}
+  #dlp-{{ section.id }} .dlp-table tr:last-child th,#dlp-{{ section.id }} .dlp-table tr:last-child td{border-bottom:none;}
+  #dlp-{{ section.id }} .dlp-rte{font-size:.9rem;color:var(--dm);line-height:1.65;}
+  #dlp-{{ section.id }} .dlp-rte h3{color:var(--gl);font-size:1rem;margin:16px 0 6px;font-family:'Playfair Display',serif;}
+  #dlp-{{ section.id }} .dlp-rte ul,#dlp-{{ section.id }} .dlp-rte ol{padding-left:18px;margin:8px 0;}
+  #dlp-{{ section.id }} .dlp-rte li{margin:4px 0;}
+  #dlp-{{ section.id }} .dlp-rte strong{color:var(--tx);}
+
+  #dlp-{{ section.id }} .dlp-rev-head{display:flex;align-items:center;justify-content:space-between;margin:56px 0 22px;}
+  #dlp-{{ section.id }} .dlp-reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  #dlp-{{ section.id }} .dlp-review{background:var(--nv2);border:1px solid var(--nb);border-radius:18px;padding:20px;margin:0;}
+  #dlp-{{ section.id }} .dlp-review__top{display:flex;align-items:center;gap:12px;margin-bottom:12px;font-size:.85rem;}
+  #dlp-{{ section.id }} .dlp-av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--go),var(--gl));color:#16110A;display:flex;align-items:center;justify-content:center;font-weight:800;}
+  #dlp-{{ section.id }} .dlp-verif{color:var(--gn);font-size:.74rem;font-weight:600;}
+  #dlp-{{ section.id }} .dlp-review blockquote{margin:0;font-size:.92rem;color:var(--dm);line-height:1.65;font-style:italic;}
+
+  #dlp-{{ section.id }} .dlp-faq{max-width:760px;margin:0 auto;}
+  #dlp-{{ section.id }} .dlp-faq details{background:var(--nv2);border:1px solid var(--nb);border-radius:14px;margin-bottom:10px;overflow:hidden;}
+  #dlp-{{ section.id }} .dlp-faq summary{list-style:none;cursor:pointer;padding:16px 18px;font-weight:700;font-size:.95rem;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  #dlp-{{ section.id }} .dlp-faq summary::-webkit-details-marker{display:none;}
+  #dlp-{{ section.id }} .dlp-chev{color:var(--go);transition:transform .2s;font-size:1.2rem;}
+  #dlp-{{ section.id }} .dlp-faq details[open] .dlp-chev{transform:rotate(180deg);}
+  #dlp-{{ section.id }} .dlp-faq p{padding:0 18px 16px;margin:0;color:var(--dm);font-size:.9rem;line-height:1.65;}
+
+  #dlp-{{ section.id }} .dlp-final{text-align:center;margin:60px 0 0;background:radial-gradient(circle at 50% 0%,#16203A,#0B1320);border:1px solid var(--nb);border-radius:24px;padding:44px 24px;}
+  #dlp-{{ section.id }} .dlp-final__h{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;margin:0 0 8px;}
+  #dlp-{{ section.id }} .dlp-final__p{color:var(--dm);margin:0 0 16px;font-size:.95rem;}
+  #dlp-{{ section.id }} .dlp-final__price{display:flex;justify-content:center;align-items:baseline;gap:12px;margin-bottom:18px;}
+  #dlp-{{ section.id }} .dlp-final .dlp-btn{max-width:420px;margin:0 auto;}
+
+  #dlp-{{ section.id }} .dlp-rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1);}
+  #dlp-{{ section.id }} .dlp-rv.dl-in{opacity:1;transform:none;}
+
+  #dlp-{{ section.id }} .dlp-sticky{position:fixed;left:0;right:0;bottom:0;z-index:40;display:none;align-items:center;gap:12px;background:rgba(11,19,32,.96);backdrop-filter:blur(10px);border-top:1px solid var(--nb);padding:10px 14px;}
+  #dlp-{{ section.id }} .dlp-sticky__p{display:flex;align-items:baseline;gap:8px;}#dlp-{{ section.id }} .dlp-sticky__p .dlp-now{font-size:1.3rem;}
+  #dlp-{{ section.id }} .dlp-sticky__f{flex:1;margin:0;}#dlp-{{ section.id }} .dlp-sticky .dlp-btn{padding:14px;border-radius:12px;}
+
+  @media (prefers-reduced-motion: reduce){#dlp-{{ section.id }} .dlp-rv{opacity:1;transform:none;transition:none;}#dlp-{{ section.id }} .dlp-main{transition:none;}}
+  @media (max-width:860px){
+    #dlp-{{ section.id }} .dlp-top{grid-template-columns:1fr;gap:24px;}
+    #dlp-{{ section.id }} .dlp-gallery{position:static;}
+    #dlp-{{ section.id }} .dlp-title{font-size:1.7rem;}
+    #dlp-{{ section.id }} .dlp-grid{grid-template-columns:1fr 1fr;}
+    #dlp-{{ section.id }} .dlp-split,#dlp-{{ section.id }} .dlp-reviews{grid-template-columns:1fr;}
+    #dlp-{{ section.id }} .dlp-wrap{padding-bottom:90px;}
+    #dlp-{{ section.id }} .dlp-sticky{display:flex;}
+  }
+</style>
+
+<script>
+  (function(){
+    var root=document.getElementById('dlp-{{ section.id }}');
+    if(!root)return;
+    var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var main=document.getElementById('dlp-main-{{ section.id }}');
+    root.querySelectorAll('.dlp-thumb').forEach(function(t){
+      t.addEventListener('click',function(){
+        if(main)main.src=t.getAttribute('data-full');
+        root.querySelectorAll('.dlp-thumb').forEach(function(x){x.classList.remove('is-active');});
+        t.classList.add('is-active');
+      });
+    });
+    var items=root.querySelectorAll('.dlp-rv');
+    if('IntersectionObserver' in window && !reduce){
+      var io=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){x.target.classList.add('dl-in');io.unobserve(x.target);}});},{threshold:.12});
+      items.forEach(function(el){io.observe(el);});
+    }else{items.forEach(function(el){el.classList.add('dl-in');});}
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Denti Luxe Produit",
+  "settings": [],
+  "presets": [{ "name": "Denti Luxe Produit" }]
+}
+{% endschema %}

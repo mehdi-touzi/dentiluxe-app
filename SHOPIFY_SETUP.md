@@ -149,3 +149,30 @@ peuvent être supprimés pour ne garder que **Signature**.
   l'API bloque l'écriture des politiques officielles faute du scope
   `write_legal_policies`).
 - Optionnel : définir **Français** comme langue par défaut (cf. §6).
+
+## 8. Page produit sur-mesure — thème « Signature »
+
+Nouvelle page produit premium (même thème **Signature**,
+`gid://shopify/OnlineStoreTheme/162689188059`), cohérente navy/or avec l'accueil.
+
+Fichiers ajoutés (vérifiés via l'API) :
+- `sections/denti-product.liquid` (≈ 22,9 Ko) — section **autonome** (CSS + JS inline,
+  scoped `#dlp-{{ section.id }}`). Utilise l'objet `{{ product }}` du template, donc
+  zéro valeur en dur :
+  - **Galerie** : grande image + miniatures cliquables (swap JS), badge −% , zoom au survol.
+  - **Buy box** : fil d'Ariane, titre, étoiles 4.9/5, prix + prix barré + « Économisez X »,
+    chips (3 modes / IPX7 / USB / sans fil), bouton **Commander → ajout panier +
+    `return_to=/checkout`** (paiement à la livraison direct), réassurance COD / livraison / retour.
+  - Bénéfices (4), **Caractéristiques** (tableau), **Description** (rendu `product.description`),
+    avis (3), FAQ accordéon, CTA final, **barre d'achat collante mobile**.
+  - Responsive 2 col → 1 col, apparition au scroll, `prefers-reduced-motion` respecté.
+- `templates/product.json` — ne charge que la section `denti-product` pour **toutes** les
+  fiches produit.
+
+Upload réalisé via **staged upload** (fichier poussé sur le CDN Shopify puis référencé
+par URL dans `themeFilesUpsert`) pour éviter les coupures de flux sur les gros fichiers.
+
+### Mise en ligne
+Inclus automatiquement dès que tu **publies le thème « Denti Luxe — Signature »**
+(Admin → Thèmes → Prévisualiser → Publier). L'accueil **et** la page produit
+deviennent premium en une seule publication.
