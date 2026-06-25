@@ -114,3 +114,38 @@ Construit sur le thème **« Denti Luxe — Premium »**
 > Pour une boutique 100 % FR par défaut : Admin → Paramètres → Langues → définir
 > **Français** comme langue par défaut (les libellés système comme « Add to cart »
 > basculent alors automatiquement via `locales/fr.json`).
+
+## 7. Page d'accueil « 10 000 € » — thème « Denti Luxe — Signature »
+
+Refonte finale, qualité agence (navy profond + or, typo Playfair Display + DM Sans,
+animations 3D : tilt souris sur le visuel produit, médaillon −% en rotation, logo
+flottant, cartes en relief au survol, apparition au scroll via IntersectionObserver,
+`prefers-reduced-motion` respecté).
+
+Thème **« Denti Luxe — Signature »**
+(`gid://shopify/OnlineStoreTheme/162689188059`, UNPUBLISHED) → **à publier**.
+
+Fichiers en place sur le thème (vérifiés via l'API) :
+- `sections/denti-landing.liquid` (≈ 21,9 Ko) — section **autonome** : tout le CSS et
+  le JS sont inline dans la section (scoped `#dl-{{ section.id }}`), donc aucune
+  dépendance externe. Hero produit (prix dynamique `{{ product }}`, bouton **Commander**
+  → ajout panier + `return_to=/checkout` pour aller droit au **paiement à la livraison**),
+  bandeau d'annonce, stats, 4 bénéfices, « Comment ça marche », 3 avis, garanties,
+  FAQ (accordéon natif), CTA final. Responsive 2 col → 1 col.
+- `templates/index.json` — ne charge que la section `denti-landing`.
+- `assets/denti-a.css`, `assets/denti-b.css`, `assets/denti-landing.js` — version
+  *splittée* du même design (uploadée pour fiabilité), **non requise** par la section
+  autonome ci-dessus mais conservée sans effet de bord.
+
+### Mise en ligne (action manuelle)
+**Admin → Boutique en ligne → Thèmes → « Denti Luxe — Signature » →
+Prévisualiser** (valider le rendu) **→ Publier.**
+Une fois publié, les anciens thèmes brouillon (Navy & Or, Premium v1/v2/v3…)
+peuvent être supprimés pour ne garder que **Signature**.
+
+### Reste à faire côté Admin (non automatisable par l'API)
+- **Pages politiques** : coller les 4 politiques + la **mention légale** dans
+  Paramètres → Politiques (texte prêt dans `scratchpad/politiques-denti-luxe.txt` ;
+  l'API bloque l'écriture des politiques officielles faute du scope
+  `write_legal_policies`).
+- Optionnel : définir **Français** comme langue par défaut (cf. §6).
