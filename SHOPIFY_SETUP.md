@@ -176,3 +176,21 @@ par URL dans `themeFilesUpsert`) pour éviter les coupures de flux sur les gros 
 Inclus automatiquement dès que tu **publies le thème « Denti Luxe — Signature »**
 (Admin → Thèmes → Prévisualiser → Publier). L'accueil **et** la page produit
 deviennent premium en une seule publication.
+
+## 9. Cinématique d'entrée + galerie produit (accueil)
+
+Sur-couche premium de la page d'accueil (`sections/denti-landing.liquid`, ≈ 26,9 Ko) :
+- **Rideau d'intro cinématique** plein écran au chargement : logo qui apparaît,
+  filet d'or qui se trace, wordmark « Denti Luxe » + tagline « L'art du sourire »,
+  puis lever de rideau. 100 % CSS (`@keyframes dl-introhide` + `dl-i*`), donc visible
+  même sans JS ; JS = nettoyage de l'overlay. Désactivé sous `prefers-reduced-motion`.
+- **Révélation en cascade du hero** : logo → titre → étoiles → texte → prix → CTA
+  apparaissent en séquence (`dl-cin` + délais `dl-d1…d8`), pendant que le visuel
+  produit se dévoile (scale + dé-flou).
+- **Galerie « Découvrez-le sous tous les angles »** : bento responsive qui exploite
+  **les 6 visuels du produit** (`p.media`), zoom au survol.
+
+Le thème live « Signature » étant publié, l'API bloque l'écriture dessus : la mise à
+jour a été faite sur un **duplicata** → **« Denti Luxe — Signature (Cinéma) »**
+(`gid://shopify/OnlineStoreTheme/162710225115`, UNPUBLISHED) → **à prévisualiser puis publier.**
+Le duplicata contient déjà la page produit et les réglages (logo, etc.).
