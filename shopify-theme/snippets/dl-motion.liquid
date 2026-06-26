@@ -1,0 +1,51 @@
+{%- comment -%}
+  Denti Luxe — micro-interactions premium via Motion (motion.dev, vanilla JS).
+  Spring tactile au survol/press sur boutons, packs et miniatures.
+  Chargé en module ESM async + try/catch : si le CDN échoue, le site reste intact.
+  Respecte prefers-reduced-motion.
+{%- endcomment -%}
+
+<style>
+  @media (prefers-reduced-motion: no-preference){
+    html{scroll-behavior:smooth;}
+  }
+  /* Laisse Motion piloter le transform de ces éléments (évite les conflits CSS) */
+  .dl-btn, .dlp-btn, .dl-mf__btn, .dlp-pack, .dlp-thumb{ will-change: transform; }
+</style>
+
+<script type="module">
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduce) {
+    try {
+      const { animate } = await import('https://cdn.jsdelivr.net/npm/motion@latest/+esm');
+      const spring = { type: 'spring', stiffness: 420, damping: 26, mass: 0.8 };
+      const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+      const to = (el, scale) => animate(el, { scale }, spring);
+
+      function bind(el, hoverScale, pressScale) {
+        if (el.__dlm) return;
+        el.__dlm = true;
+        if (fine) {
+          el.addEventListener('pointerenter', () => to(el, hoverScale));
+          el.addEventListener('pointerleave', () => to(el, 1));
+        }
+        el.addEventListener('pointerdown', () => to(el, pressScale));
+        const release = () => to(el, fine ? hoverScale : 1);
+        el.addEventListener('pointerup', release);
+        el.addEventListener('pointercancel', () => to(el, 1));
+      }
+
+      function scan() {
+        document.querySelectorAll('.dl-btn, .dlp-btn, .dl-mf__btn').forEach((el) => bind(el, 1.03, 0.96));
+        document.querySelectorAll('.dlp-pack').forEach((el) => bind(el, 1.015, 0.985));
+        document.querySelectorAll('.dlp-thumb').forEach((el) => bind(el, 1.06, 0.94));
+      }
+
+      scan();
+      new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
+    } catch (e) {
+      /* CDN indisponible : aucune dégradation, les animations CSS restent actives */
+    }
+  }
+</script>
