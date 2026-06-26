@@ -1,7 +1,9 @@
 {%- comment -%}
-  Denti Luxe — micro-interactions premium via Motion (motion.dev, vanilla JS).
-  Spring tactile au survol/press sur boutons, packs et miniatures.
-  Chargé en module ESM async + try/catch : si le CDN échoue, le site reste intact.
+  Denti Luxe — micro-interactions + apparitions au scroll premium via Motion (motion.dev, vanilla JS).
+  - Spring tactile au survol/press : boutons, packs, miniatures.
+  - Apparition au scroll en spring : titres, cartes, sections (.dl-reveal / .dlp-rv).
+  Chargé en module ESM async + try/catch : si le CDN échoue, le site reste intact
+  (le reveal CSS d'origine continue de fonctionner — rien n'est caché).
   Respecte prefers-reduced-motion.
 {%- endcomment -%}
 
@@ -9,7 +11,6 @@
   @media (prefers-reduced-motion: no-preference){
     html{scroll-behavior:smooth;}
   }
-  /* Laisse Motion piloter le transform de ces éléments (évite les conflits CSS) */
   .dl-btn, .dlp-btn, .dl-mf__btn, .dlp-pack, .dlp-thumb{ will-change: transform; }
 </style>
 
@@ -17,9 +18,10 @@
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!reduce) {
     try {
-      const { animate } = await import('https://cdn.jsdelivr.net/npm/motion@latest/+esm');
-      const spring = { type: 'spring', stiffness: 420, damping: 26, mass: 0.8 };
+      const { animate, inView } = await import('https://cdn.jsdelivr.net/npm/motion@latest/+esm');
       const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      const spring = { type: 'spring', stiffness: 420, damping: 26, mass: 0.8 };
+      const revealSpring = { type: 'spring', stiffness: 360, damping: 26, mass: 0.9 };
 
       const to = (el, scale) => animate(el, { scale }, spring);
 
@@ -31,21 +33,36 @@
           el.addEventListener('pointerleave', () => to(el, 1));
         }
         el.addEventListener('pointerdown', () => to(el, pressScale));
-        const release = () => to(el, fine ? hoverScale : 1);
-        el.addEventListener('pointerup', release);
+        el.addEventListener('pointerup', () => to(el, fine ? hoverScale : 1));
         el.addEventListener('pointercancel', () => to(el, 1));
+      }
+
+      function reveal(el) {
+        if (el.__rev) return;
+        el.__rev = true;
+        animate(el, { opacity: 1, y: 0 }, revealSpring);
       }
 
       function scan() {
         document.querySelectorAll('.dl-btn, .dlp-btn, .dl-mf__btn').forEach((el) => bind(el, 1.03, 0.96));
         document.querySelectorAll('.dlp-pack').forEach((el) => bind(el, 1.015, 0.985));
         document.querySelectorAll('.dlp-thumb').forEach((el) => bind(el, 1.06, 0.94));
+
+        // Apparition au scroll en spring — on ne reprend que les éléments pas encore révélés
+        document.querySelectorAll('.dl-reveal, .dlp-rv').forEach((el) => {
+          if (el.__rvset || el.__rev || el.classList.contains('dl-in')) return;
+          el.__rvset = true;
+          el.style.transition = 'none';
+          el.style.opacity = '0';
+          el.style.transform = 'translateY(26px)';
+          inView(el, () => { reveal(el); }, { amount: 0.15 });
+        });
       }
 
       scan();
       new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
     } catch (e) {
-      /* CDN indisponible : aucune dégradation, les animations CSS restent actives */
+      /* CDN indisponible : aucune dégradation, le reveal CSS d'origine reste actif */
     }
   }
 </script>
