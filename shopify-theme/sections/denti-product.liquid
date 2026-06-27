@@ -4,6 +4,9 @@
 {%- if p.compare_at_price > p.price -%}
   {%- assign disc = p.compare_at_price | minus: p.price | times: 100 | divided_by: p.compare_at_price -%}
 {%- endif -%}
+{%- assign img_demo = 'https://cdn.shopify.com/s/files/1/0835/7537/4043/files/hydropulseur_dentaire_video_480x480_46d501c2-3f62-495b-89b4-6b29d4ad33a6.webp?v=1782589693' -%}
+{%- assign img_jet = 'https://cdn.shopify.com/s/files/1/0835/7537/4043/files/image-1782589498640.webp?v=1782589509' -%}
+{%- assign img_ba = 'https://cdn.shopify.com/s/files/1/0835/7537/4043/files/ChatGPT_Image_27_juin_2026_21_46_43.png?v=1782589616' -%}
 
 <section class="dlp" id="dlp-{{ section.id }}">
   <div class="dlp-announce">
@@ -93,6 +96,13 @@
       </div>
     </div>
 
+    <!-- DEMO GIF -->
+    <div class="dlp-demo dlp-rv">
+      <h2 class="dlp-h2">Voyez-le en action</h2>
+      <div class="dlp-demo__media"><img src="{{ img_demo }}" alt="Démonstration : le jet d’eau déloge la plaque entre les dents" loading="lazy" width="480" height="480"></div>
+      <p class="dlp-demo__cap">Le jet pulsé déloge la plaque et les résidus entre les dents et sous la gencive.</p>
+    </div>
+
     <!-- BENEFITS -->
     <h2 class="dlp-h2 dlp-rv">Pourquoi vous allez l’adopter</h2>
     <div class="dlp-grid">
@@ -109,9 +119,9 @@
     <!-- SHOWCASE (description visuelle) -->
     <div class="dlp-show">
       <div class="dlp-showrow dlp-rv">
-        <div class="dlp-showimg"><img src="{{ im_use | image_url: width: 820 }}" alt="Hydropulseur Denti Luxe en utilisation" loading="lazy" width="410" height="410"></div>
+        <div class="dlp-showimg dlp-showimg--wide"><img src="{{ img_jet }}" alt="Jet d’eau nettoyant entre les dents — gros plan" loading="lazy" width="820" height="547"></div>
         <div class="dlp-showtxt">
-          <div class="dlp-eyebrow">Propreté niveau dentiste</div>
+          <div class="dlp-eyebrow">Un nettoyage professionnel à la maison</div>
           <h3>Comme après un détartrage — chez vous</h3>
           <p>Le jet d’eau pulsé déloge la plaque et les résidus là où la brosse et le fil dentaire n’arrivent pas.</p>
           <ul class="dlp-ul"><li>Sensation de propreté immédiate</li><li>Haleine fraîche toute la journée</li><li>1 minute par jour suffit</li></ul>
@@ -135,6 +145,12 @@
           <ul class="dlp-ul"><li>Embouts pour toute la famille</li><li>Réservoir d’eau intégré</li><li>Compact — se glisse partout</li></ul>
         </div>
       </div>
+    </div>
+
+    <!-- AVANT / APRES -->
+    <div class="dlp-ba dlp-rv">
+      <h2 class="dlp-h2">Le résultat, en image</h2>
+      <img class="dlp-ba__img" src="{{ img_ba }}" alt="Avant / Après : gencives enflammées vs gencives saines et dents propres" loading="lazy" width="1536" height="1024">
     </div>
 
     <!-- MID CTA -->
@@ -305,6 +321,19 @@
   #dlp-{{ section.id }} .dlp-mid__p{color:var(--gl);font-size:.95rem;margin:0;font-weight:600;}
   #dlp-{{ section.id }} .dlp-mid .dlp-form{width:100%;max-width:420px;margin:6px 0 0;}
   #dlp-{{ section.id }} .dlp-mid__re{display:flex;align-items:center;gap:8px;font-size:.84rem;color:var(--gn);font-weight:600;}
+
+  /* DEMO GIF */
+  #dlp-{{ section.id }} .dlp-demo{margin:54px 0 0;text-align:center;}
+  #dlp-{{ section.id }} .dlp-demo__media{max-width:430px;margin:0 auto;border-radius:20px;overflow:hidden;border:1px solid var(--nb);box-shadow:0 22px 48px rgba(0,0,0,.45);}
+  #dlp-{{ section.id }} .dlp-demo__media img{width:100%;height:auto;display:block;}
+  #dlp-{{ section.id }} .dlp-demo__cap{color:var(--dm);font-size:.92rem;line-height:1.6;max-width:520px;margin:14px auto 0;}
+
+  /* SHOWCASE wide image */
+  #dlp-{{ section.id }} .dlp-showimg--wide{aspect-ratio:3/2;}
+
+  /* AVANT / APRES */
+  #dlp-{{ section.id }} .dlp-ba{margin:54px 0 0;}
+  #dlp-{{ section.id }} .dlp-ba__img{width:100%;height:auto;display:block;border-radius:20px;border:1px solid var(--nb);box-shadow:0 22px 48px rgba(0,0,0,.45);margin-top:4px;}
 
   #dlp-{{ section.id }} .dlp-split{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:56px;align-items:start;}
   #dlp-{{ section.id }} .dlp-specs,#dlp-{{ section.id }} .dlp-desc{background:var(--nv2);border:1px solid var(--nb);border-radius:18px;padding:24px;}
