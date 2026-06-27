@@ -78,13 +78,14 @@
           {%- endfor -%}
         </div>
 
-        {% form 'product', p, class: 'dlp-form' %}
-          <input type="hidden" name="id" value="{{ v.id }}" class="dlp-vid">
-          <input type="hidden" name="return_to" value="/checkout">
-          <button type="submit" class="dlp-btn dlp-jbtn" {% unless v.available %}disabled{% endunless %}>
-            {% if v.available %}Commander maintenant — {{ p.price | money }}{% else %}Rupture de stock{% endif %}
-          </button>
-        {% endform %}
+        <div id="dlp-cod" class="dlp-codzone">
+          <div class="dlp-codzone__t">Commandez · paiement à la livraison</div>
+          {% comment %} Le formulaire COD (app Releasit, mode « formulaire intégré ») s'affiche dans cette zone. Le champ ci-dessous transmet le pack sélectionné. {% endcomment %}
+          {% form 'product', p, class: 'dlp-form' %}
+            <input type="hidden" name="id" value="{{ v.id }}" class="dlp-vid">
+            <input type="hidden" name="return_to" value="/checkout">
+          {% endform %}
+        </div>
 
         <div class="dlp-cod"><span class="dlp-check">✓</span> Vous payez <b>à la livraison</b> · aucune avance · livraison 24–72h</div>
 
@@ -158,11 +159,7 @@
       <div class="dlp-eyebrow">Offre de lancement{% if disc > 0 %} · −{{ disc }}%{% endif %}</div>
       <h3 class="dlp-mid__h">Payez à la livraison — zéro risque</h3>
       <p class="dlp-mid__p">💡 Économisez jusqu’à 198 DH en choisissant le Pack de 3</p>
-      {% form 'product', p, class: 'dlp-form' %}
-        <input type="hidden" name="id" value="{{ v.id }}" class="dlp-vid">
-        <input type="hidden" name="return_to" value="/checkout">
-        <button type="submit" class="dlp-btn" {% unless v.available %}disabled{% endunless %}>Je commande maintenant</button>
-      {% endform %}
+      <a href="#dlp-cod" class="dlp-btn">Je commande maintenant</a>
       <div class="dlp-mid__re"><span class="dlp-check">✓</span> Livraison 24–72h partout au Maroc · Satisfait ou remboursé</div>
     </div>
 
@@ -209,22 +206,14 @@
       <h2 class="dlp-final__h">Prêt à retrouver un sourire éclatant ?</h2>
       <p class="dlp-final__p">Commandez en 30 secondes · Paiement à la livraison · Satisfait ou remboursé.</p>
       <div class="dlp-final__price"><span class="dlp-now dlp-jnow">{{ p.price | money }}</span>{% if p.compare_at_price > p.price %}<span class="dlp-old dlp-jold">{{ p.compare_at_price | money }}</span>{% endif %}</div>
-      {% form 'product', p, class: 'dlp-form' %}
-        <input type="hidden" name="id" value="{{ v.id }}" class="dlp-vid">
-        <input type="hidden" name="return_to" value="/checkout">
-        <button type="submit" class="dlp-btn" {% unless v.available %}disabled{% endunless %}>{% if v.available %}Je commande maintenant{% else %}Rupture de stock{% endif %}</button>
-      {% endform %}
+      <a href="#dlp-cod" class="dlp-btn">Je commande maintenant</a>
     </div>
   </div>
 
   <!-- STICKY MOBILE BAR -->
   <div class="dlp-sticky">
     <div class="dlp-sticky__p"><span class="dlp-now dlp-jnow">{{ p.price | money }}</span>{% if p.compare_at_price > p.price %}<span class="dlp-old dlp-jold">{{ p.compare_at_price | money }}</span>{% endif %}</div>
-    {% form 'product', p, class: 'dlp-sticky__f' %}
-      <input type="hidden" name="id" value="{{ v.id }}" class="dlp-vid">
-      <input type="hidden" name="return_to" value="/checkout">
-      <button type="submit" class="dlp-btn" {% unless v.available %}disabled{% endunless %}>Commander</button>
-    {% endform %}
+    <a href="#dlp-cod" class="dlp-btn dlp-sticky__f">Commander</a>
   </div>
 </section>
 
@@ -283,9 +272,11 @@
   #dlp-{{ section.id }} .dlp-pack__price s{font-size:.78rem;color:var(--mt);}
   #dlp-{{ section.id }} .dlp-pack--pop{border-color:rgba(203,170,106,.45);}
   #dlp-{{ section.id }} .dlp-form{margin:0 0 12px;}
-  #dlp-{{ section.id }} .dlp-btn{display:flex;width:100%;align-items:center;justify-content:center;gap:9px;background:linear-gradient(180deg,var(--gl),var(--go));color:#16110A;border:none;border-radius:16px;padding:18px 22px;font-weight:800;font-size:1.05rem;cursor:pointer;box-shadow:0 12px 30px rgba(203,170,106,.32);transition:transform .12s,box-shadow .2s;font-family:inherit;}
-  #dlp-{{ section.id }} .dlp-btn:hover{transform:translateY(-2px);box-shadow:0 16px 38px rgba(203,170,106,.42);}
+  #dlp-{{ section.id }} .dlp-btn{display:flex;width:100%;align-items:center;justify-content:center;gap:9px;background:linear-gradient(180deg,var(--gl),var(--go));color:#16110A;border:none;border-radius:16px;padding:18px 22px;font-weight:800;font-size:1.05rem;cursor:pointer;text-decoration:none;text-align:center;box-shadow:0 12px 30px rgba(203,170,106,.32);transition:transform .12s,box-shadow .2s;font-family:inherit;}
+  #dlp-{{ section.id }} .dlp-btn:hover{transform:translateY(-2px);box-shadow:0 16px 38px rgba(203,170,106,.42);color:#16110A;}
   #dlp-{{ section.id }} .dlp-btn[disabled]{opacity:.5;cursor:not-allowed;box-shadow:none;}
+  #dlp-{{ section.id }} .dlp-codzone{background:var(--nv2);border:1px solid var(--go);border-radius:16px;padding:16px;margin:0 0 14px;scroll-margin-top:80px;}
+  #dlp-{{ section.id }} .dlp-codzone__t{font-weight:800;font-size:1rem;color:var(--gl);margin-bottom:8px;text-align:center;}
   #dlp-{{ section.id }} .dlp-cod{display:flex;align-items:center;gap:8px;font-size:.86rem;color:var(--gn);font-weight:600;margin-bottom:18px;}
   #dlp-{{ section.id }} .dlp-check{display:inline-flex;width:18px;height:18px;align-items:center;justify-content:center;border-radius:50%;background:rgba(51,186,134,.16);font-size:.7rem;}
   #dlp-{{ section.id }} .dlp-assur{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}

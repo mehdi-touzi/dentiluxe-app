@@ -49,13 +49,7 @@
         {% if p.compare_at_price > p.price %}<span class="dl-price__old">{{ p.compare_at_price | money }}</span>{% endif %}
       </div>
       <div class="dl-trust dl-cin dl-d6b"><span class="dl-check">✓</span> En stock · Livraison 24–72h · Vous payez à la réception</div>
-      {% form 'product', p, class: 'dl-form dl-cin dl-d7' %}
-        <input type="hidden" name="id" value="{{ v.id }}">
-        <input type="hidden" name="return_to" value="/checkout">
-        <button type="submit" class="dl-btn" {% unless v.available %}disabled{% endunless %}>
-          {% if v.available %}Commander maintenant — {{ p.price | money }}{% else %}Rupture de stock{% endif %}
-        </button>
-      {% endform %}
+      <a href="{{ p.url }}" class="dl-cta dl-cin dl-d7">Commander maintenant — {{ p.price | money }}</a>
       <a href="{{ p.url }}" class="dl-link dl-cin dl-d8">Voir tous les détails du produit →</a>
     </div>
   </div>
@@ -153,13 +147,7 @@
         <span class="dl-price__now">{{ p.price | money }}</span>
         {% if p.compare_at_price > p.price %}<span class="dl-price__old">{{ p.compare_at_price | money }}</span>{% endif %}
       </div>
-      {% form 'product', p, class: 'dl-form' %}
-        <input type="hidden" name="id" value="{{ v.id }}">
-        <input type="hidden" name="return_to" value="/checkout">
-        <button type="submit" class="dl-btn" {% unless v.available %}disabled{% endunless %}>
-          {% if v.available %}Je commande maintenant{% else %}Rupture de stock{% endif %}
-        </button>
-      {% endform %}
+      <a href="{{ p.url }}" class="dl-cta">Je commande maintenant</a>
     </div>
   </div>
 </section>
@@ -230,6 +218,9 @@
   #dl-{{ section.id }} .dl-btn:hover{transform:translateY(-2px);box-shadow:0 16px 38px rgba(203,170,106,.42);}
   #dl-{{ section.id }} .dl-btn:active{transform:translateY(0);}
   #dl-{{ section.id }} .dl-btn[disabled]{opacity:.5;cursor:not-allowed;box-shadow:none;}
+  #dl-{{ section.id }} .dl-cta{display:flex;width:100%;max-width:420px;align-items:center;justify-content:center;text-align:center;gap:9px;margin:0 0 12px;background:linear-gradient(180deg,var(--gl),var(--go));color:#16110A;border-radius:16px;padding:18px 22px;font-weight:800;font-size:1.05rem;letter-spacing:.2px;cursor:pointer;text-decoration:none;box-shadow:0 12px 30px rgba(203,170,106,.32);transition:transform .12s,box-shadow .2s;}
+  #dl-{{ section.id }} .dl-cta:hover{transform:translateY(-2px);box-shadow:0 16px 38px rgba(203,170,106,.42);color:#16110A;}
+  #dl-{{ section.id }} .dl-final .dl-cta{margin:6px auto 0;}
   #dl-{{ section.id }} .dl-link{display:inline-block;color:var(--dm);font-size:.85rem;text-decoration:none;border-bottom:1px solid var(--nb);padding-bottom:2px;}
   #dl-{{ section.id }} .dl-link:hover{color:var(--gl);}
 
