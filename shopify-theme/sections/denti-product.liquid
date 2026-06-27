@@ -57,27 +57,6 @@
           <span class="dlp-chip">Sans fil</span>
         </div>
 
-        <div class="dlp-packs" role="radiogroup" aria-label="Choisissez votre pack">
-          {%- for variant in p.variants -%}
-            {%- assign vsave = variant.compare_at_price | minus: variant.price -%}
-            <label class="dlp-pack{% if forloop.index == 2 %} dlp-pack--pop{% endif %}{% if forloop.first %} is-sel{% endif %}"
-              data-vid="{{ variant.id }}"
-              data-now="{{ variant.price | money }}"
-              data-old="{% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price | money }}{% endif %}"
-              data-save="{% if vsave > 0 %}Économisez {{ vsave | money }}{% endif %}"
-              data-label="{% if variant.available %}Commander — {{ variant.price | money }}{% else %}Rupture de stock{% endif %}">
-              <input type="radio" name="dlp-pack-{{ section.id }}" value="{{ variant.id }}"{% if forloop.first %} checked{% endif %}>
-              <span class="dlp-pack__radio"></span>
-              <span class="dlp-pack__txt">
-                <b class="dlp-pack__name">{{ variant.title }}</b>
-                {% if forloop.index == 2 %}<em class="dlp-pack__tag">★ Le plus choisi</em>{% endif %}
-                {% if vsave > 0 %}<span class="dlp-pack__save">Économisez {{ vsave | money }}</span>{% endif %}
-              </span>
-              <span class="dlp-pack__price"><b>{{ variant.price | money }}</b>{% if variant.compare_at_price > variant.price %}<s>{{ variant.compare_at_price | money }}</s>{% endif %}</span>
-            </label>
-          {%- endfor -%}
-        </div>
-
         <div id="dlp-cod" class="dlp-codzone">
           <div class="dlp-codzone__t">Commandez · paiement à la livraison</div>
           {% comment %} Le formulaire COD (app Releasit, mode « formulaire intégré ») s'affiche dans cette zone. Le champ ci-dessous transmet le pack sélectionné. {% endcomment %}
