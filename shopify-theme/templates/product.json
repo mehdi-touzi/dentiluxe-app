@@ -2,28 +2,6 @@
   "sections": {
     "denti_product": {
       "type": "denti-product",
-      "blocks": {
-        "releasit_bundle_d74kHW": {
-          "type": "shopify://apps/releasit-bundle/blocks/bundle-block/019c9545-b89c-75b6-a4e1-5c7cd764ca36",
-          "settings": {
-            "show_quantity_breaks": true,
-            "show_bundles": true,
-            "display_style": "table",
-            "margin_top": 16,
-            "margin_bottom": 8
-          }
-        },
-        "releasit_upsell_qFWiz6": {
-          "type": "shopify://apps/releasit-bundle/blocks/upsell-block/019c9545-b89c-75b6-a4e1-5c7cd764ca36",
-          "settings": {
-            "display_position": "above_add_to_cart",
-            "max_upsells": 3,
-            "margin_top": 8,
-            "margin_bottom": 8
-          }
-        }
-      },
-      "block_order": ["releasit_bundle_d74kHW", "releasit_upsell_qFWiz6"],
       "settings": {}
     }
   },
