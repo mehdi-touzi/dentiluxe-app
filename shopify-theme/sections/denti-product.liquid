@@ -60,7 +60,7 @@
         <div class="dlp-packs" aria-label="Choisissez votre pack">
           {%- for variant in p.variants -%}
             {%- assign vsave = variant.compare_at_price | minus: variant.price -%}
-            <a href="{{ p.url }}?variant={{ variant.id }}" class="dlp-pack{% if forloop.index == 2 %} dlp-pack--pop{% endif %}{% if variant.id == v.id %} is-sel{% endif %}">
+            <a href="{{ p.url }}?variant={{ variant.id }}#dlp-cod" class="dlp-pack{% if forloop.index == 2 %} dlp-pack--pop{% endif %}{% if variant.id == v.id %} is-sel{% endif %}">
               <span class="dlp-pack__radio"></span>
               <span class="dlp-pack__txt">
                 <b class="dlp-pack__name">{{ variant.title }}</b>
