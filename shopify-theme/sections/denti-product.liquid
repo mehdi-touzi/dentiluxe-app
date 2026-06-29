@@ -57,6 +57,21 @@
           <span class="dlp-chip">Sans fil</span>
         </div>
 
+        <div class="dlp-packs" aria-label="Choisissez votre pack">
+          {%- for variant in p.variants -%}
+            {%- assign vsave = variant.compare_at_price | minus: variant.price -%}
+            <a href="{{ p.url }}?variant={{ variant.id }}" class="dlp-pack{% if forloop.index == 2 %} dlp-pack--pop{% endif %}{% if variant.id == v.id %} is-sel{% endif %}">
+              <span class="dlp-pack__radio"></span>
+              <span class="dlp-pack__txt">
+                <b class="dlp-pack__name">{{ variant.title }}</b>
+                {% if forloop.index == 2 %}<em class="dlp-pack__tag">★ Le plus choisi</em>{% endif %}
+                {% if vsave > 0 %}<span class="dlp-pack__save">Économisez {{ vsave | money }}</span>{% endif %}
+              </span>
+              <span class="dlp-pack__price"><b>{{ variant.price | money }}</b>{% if variant.compare_at_price > variant.price %}<s>{{ variant.compare_at_price | money }}</s>{% endif %}</span>
+            </a>
+          {%- endfor -%}
+        </div>
+
         <div id="dlp-cod" class="dlp-codzone">
           <div class="dlp-codzone__t">Commandez · paiement à la livraison</div>
           {%- comment -%} Emplacement des blocs d'app (Packs / Offres de quantité Releasit). {%- endcomment -%}
@@ -239,7 +254,7 @@
 
   /* PACK SELECTOR */
   #dlp-{{ section.id }} .dlp-packs{display:flex;flex-direction:column;gap:10px;margin:0 0 20px;}
-  #dlp-{{ section.id }} .dlp-pack{position:relative;display:flex;align-items:center;gap:12px;padding:14px 16px;border:1.5px solid var(--nb);border-radius:16px;background:var(--nv2);cursor:pointer;transition:border-color .2s,background .2s,transform .12s;}
+  #dlp-{{ section.id }} .dlp-pack{position:relative;display:flex;align-items:center;gap:12px;padding:14px 16px;border:1.5px solid var(--nb);border-radius:16px;background:var(--nv2);cursor:pointer;text-decoration:none;color:var(--tx);transition:border-color .2s,background .2s,transform .12s;}
   #dlp-{{ section.id }} .dlp-pack:hover{border-color:rgba(203,170,106,.5);}
   #dlp-{{ section.id }} .dlp-pack.is-sel{border-color:var(--go);background:linear-gradient(180deg,rgba(203,170,106,.10),rgba(203,170,106,.02));}
   #dlp-{{ section.id }} .dlp-pack input{position:absolute;opacity:0;pointer-events:none;}
