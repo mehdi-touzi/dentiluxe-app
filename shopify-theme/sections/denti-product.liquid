@@ -60,7 +60,7 @@
         <div class="dlp-packs" aria-label="Choisissez votre pack">
           {%- for variant in p.variants -%}
             {%- assign vsave = variant.compare_at_price | minus: variant.price -%}
-            <a href="{{ p.url }}?variant={{ variant.id }}#dlp-cod" class="dlp-pack{% if forloop.index == 2 %} dlp-pack--pop{% endif %}{% if variant.id == v.id %} is-sel{% endif %}">
+            <button type="button" class="dlp-pack{% if forloop.index == 2 %} dlp-pack--pop{% endif %}{% if variant.id == v.id %} is-sel{% endif %}" data-vid="{{ variant.id }}" data-now="{{ variant.price | money }}" data-old="{% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price | money }}{% endif %}" data-save="{% if vsave > 0 %}Économisez {{ vsave | money }}{% endif %}">
               <span class="dlp-pack__radio"></span>
               <span class="dlp-pack__txt">
                 <b class="dlp-pack__name">{{ variant.title }}</b>
@@ -68,7 +68,7 @@
                 {% if vsave > 0 %}<span class="dlp-pack__save">Économisez {{ vsave | money }}</span>{% endif %}
               </span>
               <span class="dlp-pack__price"><b>{{ variant.price | money }}</b>{% if variant.compare_at_price > variant.price %}<s>{{ variant.compare_at_price | money }}</s>{% endif %}</span>
-            </a>
+            </button>
           {%- endfor -%}
         </div>
 
@@ -254,7 +254,7 @@
 
   /* PACK SELECTOR */
   #dlp-{{ section.id }} .dlp-packs{display:flex;flex-direction:column;gap:10px;margin:0 0 20px;}
-  #dlp-{{ section.id }} .dlp-pack{position:relative;display:flex;align-items:center;gap:12px;padding:14px 16px;border:1.5px solid var(--nb);border-radius:16px;background:var(--nv2);cursor:pointer;text-decoration:none;color:var(--tx);transition:border-color .2s,background .2s,transform .12s;}
+  #dlp-{{ section.id }} .dlp-pack{position:relative;display:flex;width:100%;text-align:left;font-family:inherit;align-items:center;gap:12px;padding:14px 16px;border:1.5px solid var(--nb);border-radius:16px;background:var(--nv2);cursor:pointer;text-decoration:none;color:var(--tx);transition:border-color .2s,background .2s,transform .12s;}
   #dlp-{{ section.id }} .dlp-pack:hover{border-color:rgba(203,170,106,.5);}
   #dlp-{{ section.id }} .dlp-pack.is-sel{border-color:var(--go);background:linear-gradient(180deg,rgba(203,170,106,.10),rgba(203,170,106,.02));}
   #dlp-{{ section.id }} .dlp-pack input{position:absolute;opacity:0;pointer-events:none;}
@@ -410,7 +410,9 @@
       var old=pack.getAttribute('data-old');
       var save=pack.getAttribute('data-save');
       var label=pack.getAttribute('data-label');
-      root.querySelectorAll('.dlp-vid').forEach(function(i){i.value=vid;});
+      root.querySelectorAll('.dlp-vid').forEach(function(i){i.value=vid;i.dispatchEvent(new Event('input',{bubbles:true}));i.dispatchEvent(new Event('change',{bubbles:true}));});
+      try{ history.replaceState({}, '', window.location.pathname + '?variant=' + vid); }catch(e){}
+      document.dispatchEvent(new CustomEvent('variant:change',{bubbles:true,detail:{variant:{id:parseInt(vid,10)}}}));
       root.querySelectorAll('.dlp-jnow').forEach(function(e){e.textContent=now;});
       root.querySelectorAll('.dlp-jold').forEach(function(e){e.textContent=old||'';e.style.display=old?'':'none';});
       var sv=root.querySelector('.dlp-jsave');if(sv){sv.textContent=save||'';}
