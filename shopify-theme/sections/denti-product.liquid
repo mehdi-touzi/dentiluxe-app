@@ -59,7 +59,11 @@
 
         <div id="dlp-cod" class="dlp-codzone">
           <div class="dlp-codzone__t">Commandez · paiement à la livraison</div>
-          {% comment %} Le formulaire COD (app Releasit, mode « formulaire intégré ») s'affiche dans cette zone. Le champ ci-dessous transmet le pack sélectionné. {% endcomment %}
+          {%- comment -%} Emplacement des blocs d'app (Packs / Offres de quantité Releasit). {%- endcomment -%}
+          {%- for block in section.blocks -%}
+            <div class="dlp-appblock" {{ block.shopify_attributes }}>{% render block %}</div>
+          {%- endfor -%}
+          {%- comment -%} Le formulaire COD Releasit (mode intégré) s'affiche dans cette zone. Le champ ci-dessous transmet la variante. {%- endcomment -%}
           {% form 'product', p, class: 'dlp-form' %}
             <input type="hidden" name="id" value="{{ v.id }}" class="dlp-vid">
             <input type="hidden" name="return_to" value="/checkout">
@@ -407,6 +411,7 @@
 {
   "name": "Denti Luxe Produit",
   "settings": [],
+  "blocks": [{ "type": "@app" }],
   "presets": [{ "name": "Denti Luxe Produit" }]
 }
 {% endschema %}
