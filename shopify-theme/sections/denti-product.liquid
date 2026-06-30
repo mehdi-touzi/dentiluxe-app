@@ -182,11 +182,23 @@
     </div>
 
     <!-- REVIEWS -->
-    <div class="dlp-rev-head dlp-rv"><h2 class="dlp-h2 dlp-h2--flush">Avis clients</h2><span class="dlp-stars">★★★★★ <span class="dlp-muted">4.9/5</span></span></div>
+    <div class="dlp-rev-head dlp-rv"><h2 class="dlp-h2 dlp-h2--flush">Avis clients</h2><span class="dlp-stars">★★★★★ <span class="dlp-muted">4.9/5 · 127 avis</span></span></div>
+    <p class="dlp-rev-sub dlp-rv">Photos envoyées par nos clientes après réception 📸 — paiement à la livraison.</p>
     <div class="dlp-reviews">
-      <figure class="dlp-review dlp-rv"><div class="dlp-review__top"><span class="dlp-av">S</span><div><b>Salma</b> · Rabat<br><span class="dlp-verif">✓ Achat vérifié</span></div></div><blockquote>« Depuis que j’ai mes facettes, l’hydropulseur est devenu indispensable. Mes gencives sont nickel ! »</blockquote></figure>
-      <figure class="dlp-review dlp-rv"><div class="dlp-review__top"><span class="dlp-av">Y</span><div><b>Yassine</b> · Témara<br><span class="dlp-verif">✓ Achat vérifié</span></div></div><blockquote>« Sans fil, batterie qui tient, super pratique. Livraison rapide et payé à la réception. Top. »</blockquote></figure>
-      <figure class="dlp-review dlp-rv"><div class="dlp-review__top"><span class="dlp-av">I</span><div><b>Imane</b> · Casablanca<br><span class="dlp-verif">✓ Achat vérifié</span></div></div><blockquote>« Sensation de propreté incroyable, comme après un détartrage. J’adore ✨ »</blockquote></figure>
+      {%- assign dlp_rvphotos = "https://cdn.shopify.com/s/files/1/0835/7537/4043/files/DF8956A8-EA97-4865-A536-0EA089A5D7A4.png?v=1782784565 https://cdn.shopify.com/s/files/1/0835/7537/4043/files/A7A78B1E-D5B5-4BBE-BE03-64E4AC8B6833.png?v=1782784565 https://cdn.shopify.com/s/files/1/0835/7537/4043/files/F710FDD2-3B19-4845-BAD0-F986566B7FF6.png?v=1782784565 https://cdn.shopify.com/s/files/1/0835/7537/4043/files/95F3CB46-35C9-455E-A6FA-C3CDAF6B942F.png?v=1782784565 https://cdn.shopify.com/s/files/1/0835/7537/4043/files/86613520-E4C8-4115-B5B2-77CC27DE0ED9.png?v=1782784565 https://cdn.shopify.com/s/files/1/0835/7537/4043/files/693027CA-10A8-4465-BC99-BE986EEFEF14.png?v=1782784565 https://cdn.shopify.com/s/files/1/0835/7537/4043/files/513D677A-7F41-4437-BD35-363ABFC741B6.png?v=1782784565 https://cdn.shopify.com/s/files/1/0835/7537/4043/files/CAAF98A4-F4C2-4E1B-A0FA-DB35E0BC2F64.png?v=1782784565 https://cdn.shopify.com/s/files/1/0835/7537/4043/files/B122DBFE-A6F5-4CEE-A5AA-2D5397FB49C2.png?v=1782784565 https://cdn.shopify.com/s/files/1/0835/7537/4043/files/AC7C3B95-F821-40A1-83AD-B9311919853E.png?v=1782784566 https://cdn.shopify.com/s/files/1/0835/7537/4043/files/37C8C49A-23EE-4470-AEC6-77B91A05A11D.png?v=1782784565" | split: " " -%}
+      {%- for ph in dlp_rvphotos -%}
+        <button type="button" class="dlp-rvphoto dlp-rv" data-full="{{ ph }}" aria-label="Voir l’avis client en grand">
+          <img src="{{ ph }}" loading="lazy" width="1170" height="2532" alt="Avis client vérifié Denti Luxe">
+          <span class="dlp-rvphoto__star">★★★★★</span>
+          <span class="dlp-rvphoto__badge">✓ Vérifié</span>
+        </button>
+      {%- endfor -%}
+    </div>
+    <div class="dlp-lb" id="dlp-lb-{{ section.id }}" aria-hidden="true">
+      <button type="button" class="dlp-lb__x" aria-label="Fermer">×</button>
+      <button type="button" class="dlp-lb__nav dlp-lb__prev" aria-label="Précédent">‹</button>
+      <img src="" alt="Avis client Denti Luxe" class="dlp-lb__img">
+      <button type="button" class="dlp-lb__nav dlp-lb__next" aria-label="Suivant">›</button>
     </div>
 
     <!-- FAQ -->
@@ -337,12 +349,20 @@
   #dlp-{{ section.id }} .dlp-rte strong{color:var(--tx);}
 
   #dlp-{{ section.id }} .dlp-rev-head{display:flex;align-items:center;justify-content:space-between;margin:56px 0 22px;}
-  #dlp-{{ section.id }} .dlp-reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
-  #dlp-{{ section.id }} .dlp-review{background:var(--nv2);border:1px solid var(--nb);border-radius:18px;padding:20px;margin:0;}
-  #dlp-{{ section.id }} .dlp-review__top{display:flex;align-items:center;gap:12px;margin-bottom:12px;font-size:.85rem;}
-  #dlp-{{ section.id }} .dlp-av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--go),var(--gl));color:#16110A;display:flex;align-items:center;justify-content:center;font-weight:800;}
-  #dlp-{{ section.id }} .dlp-verif{color:var(--gn);font-size:.74rem;font-weight:600;}
-  #dlp-{{ section.id }} .dlp-review blockquote{margin:0;font-size:.92rem;color:var(--dm);line-height:1.65;font-style:italic;}
+  #dlp-{{ section.id }} .dlp-rev-sub{text-align:center;color:var(--dm);font-size:.92rem;margin:-8px 0 22px;}
+  #dlp-{{ section.id }} .dlp-reviews{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  #dlp-{{ section.id }} .dlp-rvphoto{position:relative;display:block;padding:0;border:1px solid var(--nb);border-radius:16px;overflow:hidden;cursor:zoom-in;background:var(--nv2);line-height:0;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease;}
+  #dlp-{{ section.id }} .dlp-rvphoto:hover{transform:translateY(-5px);border-color:var(--go);box-shadow:0 16px 34px rgba(0,0,0,.4);}
+  #dlp-{{ section.id }} .dlp-rvphoto img{width:100%;height:100%;aspect-ratio:1170/2532;object-fit:cover;object-position:top center;display:block;}
+  #dlp-{{ section.id }} .dlp-rvphoto__star{position:absolute;top:8px;left:8px;color:#FFC83D;font-size:.72rem;letter-spacing:1px;text-shadow:0 1px 3px rgba(0,0,0,.6);line-height:1;}
+  #dlp-{{ section.id }} .dlp-rvphoto__badge{position:absolute;left:8px;bottom:8px;background:rgba(11,19,32,.82);color:var(--gn);font-size:.68rem;font-weight:700;padding:4px 8px;border-radius:999px;backdrop-filter:blur(4px);line-height:1;}
+  #dlp-{{ section.id }} .dlp-lb{position:fixed;inset:0;z-index:9999;background:rgba(4,8,16,.93);display:none;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(6px);}
+  #dlp-{{ section.id }} .dlp-lb.is-open{display:flex;}
+  #dlp-{{ section.id }} .dlp-lb__img{max-width:min(92vw,460px);max-height:88vh;border-radius:14px;box-shadow:0 30px 80px rgba(0,0,0,.6);}
+  #dlp-{{ section.id }} .dlp-lb__x{position:absolute;top:16px;right:20px;width:46px;height:46px;border-radius:50%;border:none;background:rgba(255,255,255,.14);color:#fff;font-size:1.7rem;line-height:1;cursor:pointer;}
+  #dlp-{{ section.id }} .dlp-lb__nav{position:absolute;top:50%;transform:translateY(-50%);width:50px;height:50px;border-radius:50%;border:none;background:rgba(255,255,255,.14);color:#fff;font-size:2rem;line-height:1;cursor:pointer;}
+  #dlp-{{ section.id }} .dlp-lb__prev{left:16px;}#dlp-{{ section.id }} .dlp-lb__next{right:16px;}
+  #dlp-{{ section.id }} .dlp-lb__x:hover,#dlp-{{ section.id }} .dlp-lb__nav:hover{background:rgba(255,255,255,.26);}
 
   #dlp-{{ section.id }} .dlp-faq{max-width:760px;margin:0 auto;}
   #dlp-{{ section.id }} .dlp-faq details{background:var(--nv2);border:1px solid var(--nb);border-radius:14px;margin-bottom:10px;overflow:hidden;}
@@ -371,7 +391,8 @@
     #dlp-{{ section.id }} .dlp-gallery{position:static;}
     #dlp-{{ section.id }} .dlp-title{font-size:1.7rem;}
     #dlp-{{ section.id }} .dlp-grid{grid-template-columns:1fr 1fr;}
-    #dlp-{{ section.id }} .dlp-split,#dlp-{{ section.id }} .dlp-reviews{grid-template-columns:1fr;}
+    #dlp-{{ section.id }} .dlp-split{grid-template-columns:1fr;}
+    #dlp-{{ section.id }} .dlp-reviews{grid-template-columns:repeat(2,1fr);gap:12px;}
     #dlp-{{ section.id }} .dlp-showrow{grid-template-columns:1fr;gap:14px;}
     #dlp-{{ section.id }} .dlp-showrow--rev .dlp-showimg{order:0;}
     #dlp-{{ section.id }} .dlp-showimg{aspect-ratio:4/3;}
@@ -421,6 +442,23 @@
     packs.forEach(function(pack){
       pack.addEventListener('click',function(){selectPack(pack);});
     });
+
+    // Review photo lightbox
+    var lb=document.getElementById('dlp-lb-{{ section.id }}');
+    if(lb){
+      var lbImg=lb.querySelector('.dlp-lb__img');
+      var photos=Array.prototype.slice.call(root.querySelectorAll('.dlp-rvphoto'));
+      var cur=0;
+      function show(i){cur=(i+photos.length)%photos.length;lbImg.src=photos[cur].getAttribute('data-full');}
+      function open(i){show(i);lb.classList.add('is-open');lb.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';}
+      function close(){lb.classList.remove('is-open');lb.setAttribute('aria-hidden','true');document.body.style.overflow='';}
+      photos.forEach(function(p,i){p.addEventListener('click',function(){open(i);});});
+      lb.querySelector('.dlp-lb__x').addEventListener('click',close);
+      lb.querySelector('.dlp-lb__prev').addEventListener('click',function(){show(cur-1);});
+      lb.querySelector('.dlp-lb__next').addEventListener('click',function(){show(cur+1);});
+      lb.addEventListener('click',function(e){if(e.target===lb)close();});
+      document.addEventListener('keydown',function(e){if(!lb.classList.contains('is-open'))return;if(e.key==='Escape')close();else if(e.key==='ArrowLeft')show(cur-1);else if(e.key==='ArrowRight')show(cur+1);});
+    }
   })();
 </script>
 
