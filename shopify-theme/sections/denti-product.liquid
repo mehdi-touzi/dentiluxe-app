@@ -186,12 +186,19 @@
     <p class="dlp-rev-sub dlp-rv">Photos envoyées par nos clientes après réception 📸 — paiement à la livraison.</p>
     <div class="dlp-reviews">
       {%- assign dlp_rvphotos = "https://cdn.shopify.com/s/files/1/0835/7537/4043/files/DF8956A8-EA97-4865-A536-0EA089A5D7A4.png?v=1782784565 https://cdn.shopify.com/s/files/1/0835/7537/4043/files/A7A78B1E-D5B5-4BBE-BE03-64E4AC8B6833.png?v=1782784565 https://cdn.shopify.com/s/files/1/0835/7537/4043/files/F710FDD2-3B19-4845-BAD0-F986566B7FF6.png?v=1782784565 https://cdn.shopify.com/s/files/1/0835/7537/4043/files/95F3CB46-35C9-455E-A6FA-C3CDAF6B942F.png?v=1782784565 https://cdn.shopify.com/s/files/1/0835/7537/4043/files/86613520-E4C8-4115-B5B2-77CC27DE0ED9.png?v=1782784565 https://cdn.shopify.com/s/files/1/0835/7537/4043/files/693027CA-10A8-4465-BC99-BE986EEFEF14.png?v=1782784565 https://cdn.shopify.com/s/files/1/0835/7537/4043/files/513D677A-7F41-4437-BD35-363ABFC741B6.png?v=1782784565 https://cdn.shopify.com/s/files/1/0835/7537/4043/files/CAAF98A4-F4C2-4E1B-A0FA-DB35E0BC2F64.png?v=1782784565 https://cdn.shopify.com/s/files/1/0835/7537/4043/files/B122DBFE-A6F5-4CEE-A5AA-2D5397FB49C2.png?v=1782784565 https://cdn.shopify.com/s/files/1/0835/7537/4043/files/AC7C3B95-F821-40A1-83AD-B9311919853E.png?v=1782784566 https://cdn.shopify.com/s/files/1/0835/7537/4043/files/37C8C49A-23EE-4470-AEC6-77B91A05A11D.png?v=1782784565" | split: " " -%}
+      {%- assign dlp_rvnames = "Salma · Casablanca|Hajar · Rabat|Yassine · Marrakech|Imane · Tanger|Khadija · Fès|Oussama · Agadir|Sara · Meknès|Nada · Casablanca|Fatima Zahra · Oujda|Mehdi · Kénitra|Amal · Tétouan" | split: "|" -%}
+      {%- assign dlp_rvtexts = "« Résultat incroyable, mes gencives ne saignent plus 😍 »|« Wllah ma ndemt, l’haleine fraîche o lasnan n9iyin bzaf 🔥 »|« Livré en 48h, payé à la livraison. Nickel ! »|« Bsah wa3ra, kan7ess b détartrage mn 3and tbib 😁 »|« Parfait pour mes facettes, je recommande à 100% »|« Top, jat m3aha les embouts kamlin, t9der tkhdemha l3a2ila kamla 👌 »|« Sensation de propreté juste après. J’adore ✨ »|« Chrit pack de 3, kola wa7ed f darna 3ndo l’embout dyalo 👍 »|« Batterie qui tient longtemps, très facile à utiliser »|« Service au top, confirmaw m3aya f WhatsApp o wsel f l’we9t 🙏 »|« Ahssen chra dyali had l’3am, mreggla bzaf 💧 »" | split: "|" -%}
       {%- for ph in dlp_rvphotos -%}
-        <button type="button" class="dlp-rvphoto dlp-rv" data-full="{{ ph }}" aria-label="Voir l’avis client en grand">
-          <img src="{{ ph }}" loading="lazy" width="1170" height="2532" alt="Avis client vérifié Denti Luxe">
-          <span class="dlp-rvphoto__star">★★★★★</span>
-          <span class="dlp-rvphoto__badge">✓ Vérifié</span>
-        </button>
+        <figure class="dlp-rvcard dlp-rv">
+          <button type="button" class="dlp-rvphoto" data-full="{{ ph }}" aria-label="Voir l’avis client en grand">
+            <img src="{{ ph }}" loading="lazy" width="1170" height="2532" alt="Avis client vérifié Denti Luxe">
+            <span class="dlp-rvphoto__badge">✓ Vérifié</span>
+          </button>
+          <figcaption class="dlp-rvcap">
+            <div class="dlp-rvcap__top"><b>{{ dlp_rvnames[forloop.index0] }}</b><span class="dlp-rvstars">★★★★★</span></div>
+            <p>{{ dlp_rvtexts[forloop.index0] }}</p>
+          </figcaption>
+        </figure>
       {%- endfor -%}
     </div>
     <div class="dlp-lb" id="dlp-lb-{{ section.id }}" aria-hidden="true">
@@ -350,12 +357,17 @@
 
   #dlp-{{ section.id }} .dlp-rev-head{display:flex;align-items:center;justify-content:space-between;margin:56px 0 22px;}
   #dlp-{{ section.id }} .dlp-rev-sub{text-align:center;color:var(--dm);font-size:.92rem;margin:-8px 0 22px;}
-  #dlp-{{ section.id }} .dlp-reviews{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  #dlp-{{ section.id }} .dlp-reviews{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  #dlp-{{ section.id }} .dlp-rvcard{margin:0;display:flex;flex-direction:column;}
   #dlp-{{ section.id }} .dlp-rvphoto{position:relative;display:block;padding:0;border:1px solid var(--nb);border-radius:16px;overflow:hidden;cursor:zoom-in;background:var(--nv2);line-height:0;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease;}
   #dlp-{{ section.id }} .dlp-rvphoto:hover{transform:translateY(-5px);border-color:var(--go);box-shadow:0 16px 34px rgba(0,0,0,.4);}
   #dlp-{{ section.id }} .dlp-rvphoto img{width:100%;height:100%;aspect-ratio:1170/2532;object-fit:cover;object-position:top center;display:block;}
-  #dlp-{{ section.id }} .dlp-rvphoto__star{position:absolute;top:8px;left:8px;color:#FFC83D;font-size:.72rem;letter-spacing:1px;text-shadow:0 1px 3px rgba(0,0,0,.6);line-height:1;}
   #dlp-{{ section.id }} .dlp-rvphoto__badge{position:absolute;left:8px;bottom:8px;background:rgba(11,19,32,.82);color:var(--gn);font-size:.68rem;font-weight:700;padding:4px 8px;border-radius:999px;backdrop-filter:blur(4px);line-height:1;}
+  #dlp-{{ section.id }} .dlp-rvcap{padding:11px 4px 0;}
+  #dlp-{{ section.id }} .dlp-rvcap__top{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:5px;}
+  #dlp-{{ section.id }} .dlp-rvcap__top b{font-size:.85rem;color:var(--tx);font-weight:700;}
+  #dlp-{{ section.id }} .dlp-rvstars{color:var(--go);font-size:.7rem;letter-spacing:1px;flex-shrink:0;}
+  #dlp-{{ section.id }} .dlp-rvcap p{margin:0;font-size:.82rem;color:var(--dm);line-height:1.5;font-style:italic;}
   #dlp-{{ section.id }} .dlp-lb{position:fixed;inset:0;z-index:9999;background:rgba(4,8,16,.93);display:none;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(6px);}
   #dlp-{{ section.id }} .dlp-lb.is-open{display:flex;}
   #dlp-{{ section.id }} .dlp-lb__img{max-width:min(92vw,460px);max-height:88vh;border-radius:14px;box-shadow:0 30px 80px rgba(0,0,0,.6);}
