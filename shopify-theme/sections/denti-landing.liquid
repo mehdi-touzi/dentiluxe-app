@@ -6,6 +6,32 @@
 {%- endif -%}
 
 <section class="dl" id="dl-{{ section.id }}">
+  {%- comment -%} SEO — Données structurées Organisation + Site {%- endcomment -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Denti Luxe",
+    "url": "{{ shop.url }}{{ routes.root_url }}",
+    {% if settings.logo %}"logo": "{{ settings.logo | image_url: width: 400 | prepend: 'https:' }}",{% endif %}
+    "description": "Denti Luxe — Hydropulseur et soins bucco-dentaires premium au Maroc. Paiement à la livraison, livraison 24–72h.",
+    "areaServed": "MA"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Denti Luxe",
+    "url": "{{ shop.url }}{{ routes.root_url }}",
+    "inLanguage": "fr-MA",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "{{ shop.url }}/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
 
   <!-- CINEMATIC INTRO -->
   <div class="dl-intro" aria-hidden="true">
